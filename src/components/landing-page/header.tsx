@@ -7,24 +7,22 @@ import Logo from "../../../public/ExampleLogo.png";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { getDisplayName } from "next/dist/shared/lib/utils";
+import { Button } from "../ui/button";
 
-const routes = [
-  { title: "Features", href: "#features" },
-  { title: "Resources", href: "#resources" },
-  { title: "Pricing", href: "#pricing" },
-  { title: "Testimonials", href: "#testimonial" },
-];
+// const routes = [
+//   { title: "Features", href: "#features" },
+//   { title: "Resources", href: "#resources" },
+//   { title: "Pricing", href: "#pricing" },
+//   { title: "Testimonials", href: "#testimonial" },
+// ];
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -150,23 +148,32 @@ function Header() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href={"#"}>
-              {" "}
-              <NavigationMenuLink
-                className={cn(navigationMenuTriggerStyle(), {
-                  "dark:text-white": path === "#testimonial",
-                  "dark:text-white/40": path !== "#testimonial",
-                  "font-normal": true,
-                  "text-xl": true,
-                })}
-              >
-                Testimonial
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              href={"#"}
+              className={cn(navigationMenuTriggerStyle(), {
+                "dark:text-white": path === "#testimonial",
+                "dark:text-white/40": path !== "#testimonial",
+                "font-normal": true,
+                "text-xl": true,
+              })}
+            >
+              Testimonial
+            </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <aside className="flex w-full gap-2 justify-end"></aside>
+      <aside className="flex w-full gap-2 justify-end">
+        <Link href={"/login"}>
+          <Button variant="btn-secondary" className="p-1 hidden sm:block">
+            Login
+          </Button>
+        </Link>
+        <Link href={"/signup"}>
+          <Button variant="btn-primary" className="whitespace-nowrap">
+            Sign up
+          </Button>
+        </Link>
+      </aside>
     </header>
   );
 }
@@ -176,7 +183,7 @@ export default Header;
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
   React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
+>(({ title, children, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>

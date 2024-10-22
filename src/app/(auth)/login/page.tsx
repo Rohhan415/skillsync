@@ -34,10 +34,12 @@ function LoginPage() {
 
   const isLoading = form.formState.isSubmitting;
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
-    const { error } = await actionLoginUser(data);
-    if (error) {
+    const result = await actionLoginUser(data);
+    console.log(result, "heres result");
+
+    if (result.error) {
       form.reset();
-      setSubmitError(error.message);
+      setSubmitError(result.error);
     }
     router.replace("/dashboard");
   };
@@ -63,7 +65,7 @@ function LoginPage() {
           disabled={isLoading}
           control={form.control}
           name="email"
-          render={(field) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input type="email" placeholder="Email" {...field}></Input>
@@ -75,7 +77,7 @@ function LoginPage() {
           disabled={isLoading}
           control={form.control}
           name="password"
-          render={(field) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input
@@ -96,10 +98,12 @@ function LoginPage() {
         >
           {!isLoading ? "Login" : <Loader />}
         </Button>
-        <span className="self-container">Don&apos;t have an account?</span>
-        <Link href="/signup" className="text-primary">
-          Sign Up
-        </Link>
+        <span className="self-center">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-primary">
+            Sign Up
+          </Link>
+        </span>
       </form>
     </Form>
   );
