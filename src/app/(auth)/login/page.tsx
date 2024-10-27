@@ -5,7 +5,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormSchema } from "@/lib/supabase/types";
+import { FormSchema } from "@/lib/types";
 import Link from "next/link";
 import Logo from "../../../../public/ExampleLogo.png";
 import Image from "next/image";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/global/Loader";
 import { actionLoginUser } from "@/lib/serverActions/auth-actions";
 
 function LoginPage() {
@@ -35,7 +35,8 @@ function LoginPage() {
   const isLoading = form.formState.isSubmitting;
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     const result = await actionLoginUser(data);
-    console.log(result, "heres result");
+
+    console.log(result);
 
     if (result.error) {
       form.reset();

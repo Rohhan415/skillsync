@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { relations, sql } from "drizzle-orm";
+
 export const keyStatus = pgEnum("key_status", [
   "expired",
   "invalid",
@@ -72,78 +73,78 @@ export const action = pgEnum("action", [
 
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+  created_at: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
-  workspaceOwner: uuid("workspace_owner").notNull(),
+  workspace_owner: uuid("workspace_owner").notNull(),
   title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
+  icon_id: text("icon_id").notNull(),
   data: text("data"),
-  inTrash: text("in_trash"),
+  in_trash: text("in_trash"),
   logo: text("logo"),
-  bannerUrl: text("banner_url"),
+  banner_url: text("banner_url"),
 });
 
 export const folders = pgTable("folders", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+  created_at: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
   title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
+  icon_id: text("icon_id").notNull(),
   data: text("data"),
-  inTrash: text("in_trash"),
-  bannerUrl: text("banner_url"),
-  workspaceId: uuid("workspace_id")
+  in_trash: text("in_trash"),
+  banner_url: text("banner_url"),
+  workspace_id: uuid("workspace_id")
     .notNull()
     .references(() => workspaces.id, { onDelete: "cascade" }),
 });
 
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+  created_at: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
   title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
+  icon_id: text("icon_id").notNull(),
   data: text("data"),
-  inTrash: text("in_trash"),
-  bannerUrl: text("banner_url"),
-  workspaceId: uuid("workspace_id")
+  in_trash: text("in_trash"),
+  banner_url: text("banner_url"),
+  workspace_id: uuid("workspace_id")
     .notNull()
     .references(() => workspaces.id, { onDelete: "cascade" }),
-  folderId: uuid("folder_id")
+  folder_id: uuid("folder_id")
     .notNull()
     .references(() => folders.id, { onDelete: "cascade" }),
 });
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull(),
-  fullName: text("full_name"),
-  avatarUrl: text("avatar_url"),
-  billingAddress: jsonb("billing_address"),
-  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }),
-  paymentMethod: jsonb("payment_method"),
+  full_name: text("full_name"),
+  avatar_url: text("avatar_url"),
+  billing_address: jsonb("billing_address"),
+  updated_at: timestamp("updated_at", { withTimezone: true, mode: "string" }),
+  payment_method: jsonb("payment_method"),
   email: text("email"),
 });
 
 export const customers = pgTable("customers", {
   id: uuid("id").primaryKey().notNull(),
-  stripeCustomerId: text("stripe_customer_id"),
+  stripe_customer_id: text("stripe_customer_id"),
 });
 
 export const prices = pgTable("prices", {
   id: text("id").primaryKey().notNull(),
-  productId: text("product_id").references(() => products.id),
+  product_id: text("product_id").references(() => products.id),
   active: boolean("active"),
   description: text("description"),
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  unitAmount: bigint("unit_amount", { mode: "number" }),
+  unit_amount: bigint("unit_amount", { mode: "number" }),
   currency: text("currency"),
   type: pricingType("type"),
   interval: pricingPlanInterval("interval"),
-  intervalCount: integer("interval_count"),
-  trialPeriodDays: integer("trial_period_days"),
+  interval_count: integer("interval_count"),
+  trial_period_days: integer("trial_period_days"),
   metadata: jsonb("metadata"),
 });
 
@@ -158,57 +159,57 @@ export const products = pgTable("products", {
 
 export const subscriptions = pgTable("subscriptions", {
   id: text("id").primaryKey().notNull(),
-  userId: uuid("user_id").notNull(),
+  user_id: uuid("user_id").notNull(),
   status: subscriptionStatus("status"),
   metadata: jsonb("metadata"),
-  priceId: text("price_id").references(() => prices.id),
+  price_id: text("price_id").references(() => prices.id),
   quantity: integer("quantity"),
-  cancelAtPeriodEnd: boolean("cancel_at_period_end"),
+  cancel_at_period_end: boolean("cancel_at_period_end"),
   created: timestamp("created", { withTimezone: true, mode: "string" })
     .default(sql`now()`)
     .notNull(),
-  currentPeriodStart: timestamp("current_period_start", {
+  current_period_start: timestamp("current_period_start", {
     withTimezone: true,
     mode: "string",
   })
     .default(sql`now()`)
     .notNull(),
-  currentPeriodEnd: timestamp("current_period_end", {
+  current_period_end: timestamp("current_period_end", {
     withTimezone: true,
     mode: "string",
   })
     .default(sql`now()`)
     .notNull(),
-  endedAt: timestamp("ended_at", {
+  ended_at: timestamp("ended_at", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
-  cancelAt: timestamp("cancel_at", {
+  cancel_at: timestamp("cancel_at", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
-  canceledAt: timestamp("canceled_at", {
+  canceled_at: timestamp("canceled_at", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
-  trialStart: timestamp("trial_start", {
+  trial_start: timestamp("trial_start", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
-  trialEnd: timestamp("trial_end", {
+  trial_end: timestamp("trial_end", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
 });
 
 export const collaborators = pgTable("collaborators", {
-  workspaceId: uuid("workspace_id")
+  workspace_id: uuid("workspace_id")
     .notNull()
     .references(() => workspaces.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+  created_at: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
-  userId: uuid("user_id")
+  user_id: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   id: uuid("id").defaultRandom().primaryKey().notNull(),
@@ -220,7 +221,7 @@ export const productsRelations = relations(products, ({ many }) => ({
 
 export const pricesRelations = relations(prices, ({ one }) => ({
   product: one(products, {
-    fields: [prices.productId],
+    fields: [prices.product_id],
     references: [products.id],
   }),
 }));

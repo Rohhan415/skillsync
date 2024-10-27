@@ -2,10 +2,10 @@ import React from "react";
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: any;
+  params: unknown;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, params }) => {
+const Layout: React.FC<LayoutProps> = async ({ children }) => {
   return <main className="flex over-hidden h-screen">{children}</main>;
 };
 
