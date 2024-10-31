@@ -58,7 +58,10 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
           }}
         >
           {selectedOption ? (
-            <SelectedWorkspace workspace={selectedOption} />
+            <SelectedWorkspace
+              onClick={handleSelect}
+              workspace={selectedOption}
+            />
           ) : (
             "Select a workspace"
           )}
@@ -103,7 +106,6 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
               header="Create A Workspace"
               content={<WorkspaceCreator />}
               description="Create a new workspace"
-            
             >
               <div className="flex transition-all hover:bg-muted justify-center items-center gap-2 p-2 w-full">
                 <article className="text-slate-500 rounded-full bg-slate-800 w-4 h-4 flex justify-center items-center ">

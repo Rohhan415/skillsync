@@ -47,6 +47,8 @@ export const createWorkspace = async (workspace: workspace) => {
       .from("workspaces") // Replace with your table name
       .insert(workspace);
 
+    console.log(data);
+
     if (error) {
       console.log(error);
       return { data: null, error: "Error" };
@@ -90,52 +92,37 @@ export const getFolders = async (workspaceId: string) => {
 export const getPrivateWorkspaces = async (userId: string) => {
   if (!userId) return [];
 
-  try {
-    // First, get the list of workspace IDs that the user is a collaborator of
-    const { data: collaboratorData, error: collaboratorError } = await supabase
-      .from("collaborators")
-      .select("workspace_id")
-      .eq("user_id", userId);
+  const { data: workspaces, error: workspacesError } = await supabase
+    .from("workspaces")
+    .select(
+      "id, created_at, workspace_owner, title, icon_id, data, in_trash, logo, banner_url"
+    )
+    .eq("workspace_owner", userId);
 
-    if (collaboratorError) {
-      console.log(collaboratorError, "sisi");
-      return [];
-    }
-
-    // Extract the IDs from the collaborator data
-    const collaboratorWorkspaceIds =
-      collaboratorData?.map((item) => item.workspace_id) || [];
-
-    // Next, get workspaces that the user owns and exclude those they are a collaborator of
-    const { data, error } = await supabase
-      .from("workspaces")
-      .select(
-        `
-        id,
-        created_at,
-        workspace_owner,
-        title,
-        icon_id,
-        data,
-        in_trash,
-        logo,
-        banner_url
-      `
-      )
-      .eq("workspace_owner", userId)
-      .not("id", "in", `(${collaboratorWorkspaceIds.join(",")})`);
-    //need to parse it with commas to make it work properly
-
-    if (error) {
-      console.log(error, "ss");
-      return [];
-    }
-
-    return data;
-  } catch (error) {
-    console.log(error);
+  if (workspacesError) {
+    console.error("Error fetching workspaces:", workspacesError);
     return [];
   }
+
+  const { data: collaborators, error: collaboratorsError } = await supabase
+    .from("collaborators")
+    .select("workspace_id");
+
+  if (collaboratorsError) {
+    console.error("Error fetching collaborators:", collaboratorsError);
+    return [];
+  }
+
+  const collaboratorWorkspaceIds = new Set(
+    collaborators.map((collaborator) => collaborator.workspace_id)
+  );
+
+  const privateWorkspaces =
+    workspaces?.filter(
+      (workspace) => !collaboratorWorkspaceIds.has(workspace.id)
+    ) || [];
+
+  return privateWorkspaces;
 };
 
 export const getCollaboratingWorkspaces = async (userId: string) => {
@@ -159,7 +146,7 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
     `
     )
     .eq("user_id", userId)
-    .eq("workspaces.workspace_owner", userId); // Only include workspaces owned by the specified user
+    .eq("workspaces.workspace_owner", userId);
 
   if (error) {
     console.error("Error fetching collaborating workspaces:", error);
@@ -197,7 +184,7 @@ export const getSharedWorkspaces = async (userId: string) => {
     .eq("workspace_owner", userId)
     .order("created_at", { ascending: true });
 
-  console.log(sharedWorkspaces, "sharedWorkspaces");
+  //console.log(sharedWorkspaces, "sharedWorkspaces");
 
   if (error) {
     console.error("Error fetching shared workspaces:", error);
@@ -238,4 +225,20 @@ export const addCollaborators = async (users: User[], workspaceId: string) => {
       }
     }
   }
+};
+
+export const getUsersFromSearch = async (email: string) => {
+  if (!email) return [];
+
+  const { data: accounts, error } = await supabase
+    .from("users")
+    .select("*")
+    .like("email", `${email}%`);
+
+  if (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+
+  return accounts;
 };

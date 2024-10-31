@@ -7,23 +7,15 @@ import { useEffect, useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-
-interface User {
-  id: string;
-  full_name: string | null;
-  avatar_url: string | null;
-  email: string | null;
-}
+import { getUsersFromSearch } from "@/lib/supabase/queries";
 
 interface CollaboratorSearchProps {
   existingCollaborators: User[] | [];
@@ -37,18 +29,24 @@ const CollaboratorSearch: React.FC<CollaboratorSearchProps> = ({
   trigger,
 }) => {
   const { user } = useSupabaseUser();
-  const [searchResults, setSearchResults] = useState<Partial<User>[]>([
-    { email: "something@gmail.com", id: "23233" },
-  ]);
+  const [searchResults, setSearchResults] = useState<User[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
   }, []);
 
-  const onChangeHandler = () => {};
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (timerRef) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      const result = await getUsersFromSearch(event.target.value);
+      setSearchResults(result);
+    }, 450);
+  };
 
-  const addCollaborator = () => {};
+  const addCollaborator = (user: User) => {
+    getCollaborators(user);
+  };
 
   return (
     <Sheet>

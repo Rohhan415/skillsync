@@ -36,7 +36,7 @@ function LoginPage() {
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     const result = await actionLoginUser(data);
 
-    console.log(result);
+    console.log(result, "result");
 
     if (result.error) {
       form.reset();

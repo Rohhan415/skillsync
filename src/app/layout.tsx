@@ -3,6 +3,7 @@ import { DM_Sans } from "next/font/google";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import AppStateProvider from "@/lib/providers/state-provider";
+import { SupabaseUserProvider } from "@/lib/providers/supabase-user-provider";
 
 const inter = DM_Sans({ subsets: ["latin"] });
 
@@ -17,10 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={(twMerge("bg-background"), inter.className)}>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body
+        className={twMerge("bg-background", inter.className)}
+        suppressHydrationWarning={true}
+      >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <AppStateProvider>{children}</AppStateProvider>
+          <SupabaseUserProvider>
+            <AppStateProvider>{children}</AppStateProvider>
+          </SupabaseUserProvider>
         </ThemeProvider>
       </body>
     </html>

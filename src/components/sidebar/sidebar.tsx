@@ -39,13 +39,6 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
       getSharedWorkspaces(user.id),
     ]);
 
-  console.log(
-    collaboratingWorkspaces,
-    "ewewe",
-    privateWorkspaces,
-    sharedWorkspaces
-  );
-
   return (
     <aside
       className={twMerge(
@@ -62,9 +55,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
           privateWorkspaces={privateWorkspaces}
           sharedWorkspaces={sharedWorkspaces}
           collaboratingWorkspaces={collaboratingWorkspaces}
-        >
-        
-        </WorkspaceDropdown>
+        />
       </div>
     </aside>
   );
