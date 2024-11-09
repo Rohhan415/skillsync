@@ -1,7 +1,7 @@
 "use server";
 import { supabase } from "./supabase-client";
 import { validate } from "uuid";
-import { User, workspace } from "./supabase.types";
+import { Folder, User, workspace } from "./supabase.types";
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -241,4 +241,15 @@ export const getUsersFromSearch = async (email: string) => {
   }
 
   return accounts;
+};
+
+export const createFolder = async (folder: Folder) => {
+  const { data, error } = await supabase.from("folders").insert(folder);
+
+  if (error) {
+    console.log(error);
+    return { data: null, error: "Error" };
+  }
+
+  return { data, error: null };
 };
