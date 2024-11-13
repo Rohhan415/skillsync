@@ -253,3 +253,25 @@ export const createFolder = async (folder: Folder) => {
 
   return { data, error: null };
 };
+
+export const updateFolder = async (
+  folder: Partial<Folder>,
+  folderId: string
+) => {
+  try {
+    const { data, error } = await supabase
+      .from("folders")
+      .update(folder)
+      .eq("id", folderId);
+
+    if (error) {
+      console.log(error);
+      return { data: null, error: "Error" };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: "Error" };
+  }
+};

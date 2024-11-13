@@ -122,7 +122,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
           .map((folder) => (
             <div key={folder.id}></div>
           ))}
-        <Dropdown />
+        <Dropdown title={""} id={""} listType={"folder"} iconId={""} />
       </Accordion>
     </>
   );

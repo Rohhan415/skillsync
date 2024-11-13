@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 interface EmojiPickerProps {
@@ -17,7 +16,9 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ children, getValue }) => {
   return (
     <div className="flex items-center">
       <Popover>
-        <PopoverTrigger className="cursor-pointer">{children}</PopoverTrigger>
+        <PopoverTrigger asChild>
+          <span className="cursor-pointer">{children}</span>
+        </PopoverTrigger>
         <PopoverContent className="p-0 border-none">
           <Picker onEmojiClick={onClick} />
         </PopoverContent>
