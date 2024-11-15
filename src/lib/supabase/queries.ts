@@ -1,7 +1,7 @@
 "use server";
 import { supabase } from "./supabase-client";
 import { validate } from "uuid";
-import { Folder, User, workspace } from "./supabase.types";
+import { File, Folder, User, workspace } from "./supabase.types";
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -26,8 +26,8 @@ export const getFiles = async (folderId: string) => {
     const { data, error } = await supabase
       .from("files") // Replace with your table name
       .select("*")
-      .eq("folderId", folderId)
-      .order("createdAt", { ascending: true });
+      .eq("folder_id", folderId)
+      .order("created_at", { ascending: true });
 
     if (error) {
       console.log(error);
@@ -254,6 +254,17 @@ export const createFolder = async (folder: Folder) => {
   return { data, error: null };
 };
 
+export const createFile = async (file: File) => {
+  const { data, error } = await supabase.from("files").insert(file);
+
+  if (error) {
+    console.log(error);
+    return { data: null, error: "Error" };
+  }
+
+  return { data, error: null };
+};
+
 export const updateFolder = async (
   folder: Partial<Folder>,
   folderId: string
@@ -263,6 +274,25 @@ export const updateFolder = async (
       .from("folders")
       .update(folder)
       .eq("id", folderId);
+
+    if (error) {
+      console.log(error);
+      return { data: null, error: "Error" };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: "Error" };
+  }
+};
+
+export const updateFile = async (file: Partial<Folder>, fileId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from("files")
+      .update(file)
+      .eq("id", fileId);
 
     if (error) {
       console.log(error);

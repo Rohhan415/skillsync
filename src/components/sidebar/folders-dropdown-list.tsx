@@ -5,7 +5,7 @@ import { Folder } from "@/lib/supabase/supabase.types";
 import { useEffect, useState, useMemo } from "react";
 import TooltipComponent from "../global/tooltip-component";
 import { PlusIcon } from "lucide-react";
-import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
+
 import { v4 } from "uuid";
 import { createFolder } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +25,6 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   const { state, dispatch, folderId } = useAppState();
   const [folders, setFolders] = useState<Folder[]>([]); // Define folders state
   const [hasInitialized, setHasInitialized] = useState(false);
-  const { subscription } = useSupabaseUser();
 
   // Memoize the folders data to prevent unnecessary re-renders
   const foldersData = useMemo(
@@ -120,9 +119,14 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         {folders
           .filter((folder) => !folder.in_trash)
           .map((folder) => (
-            <div key={folder.id}></div>
+            <Dropdown
+              key={folder.id}
+              title={folder.title}
+              id={folder.id}
+              listType={"folder"}
+              iconId={folder.icon_id}
+            />
           ))}
-        <Dropdown title={""} id={""} listType={"folder"} iconId={""} />
       </Accordion>
     </>
   );

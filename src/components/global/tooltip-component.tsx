@@ -13,7 +13,9 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children} </TooltipTrigger>
+        <TooltipTrigger asChild>
+          <span>{children}</span>
+        </TooltipTrigger>
         <TooltipContent>{message}</TooltipContent>
       </Tooltip>
     </TooltipProvider>

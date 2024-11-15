@@ -18,7 +18,7 @@ interface SidebarProps {
   className?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
+const Sidebar: React.FC<SidebarProps> = async ({ params }) => {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -26,8 +26,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
 
   if (!user) return;
 
-  const { data: subscriptionData, error: subscriptionError } =
-    await getUserSubscriptionStatus(user.id);
+  const { error: subscriptionError } = await getUserSubscriptionStatus(user.id);
 
   const { data: workspaceFolderData, error: foldersError } = await getFolders(
     params.workspaceId
@@ -63,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
         <ScrollArea className="overflow-auto relative h-[450px]">
           <div className=" pointer-events-none w-full absolute bottom-0 h-20 bg-gradient-to-t from from-background to-transparent z-40" />
           <FoldersDropdownList
-            workspaceFolders={workspaceFolderData}
+            workspaceFolders={workspaceFolderData || []}
             workspaceId={params.workspaceId}
           />
         </ScrollArea>
