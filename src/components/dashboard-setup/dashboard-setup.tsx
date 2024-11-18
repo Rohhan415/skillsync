@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { z } from "zod";
-import { Subscription, workspace } from "@/lib/supabase/supabase.types";
+import { Subscription, Workspace } from "@/lib/supabase/supabase.types";
 import { createWorkspace } from "@/lib/supabase/queries";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
@@ -67,8 +67,6 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
             upsert: true,
           });
 
-        console.log(error, "eeee");
-
         if (error) throw new Error("");
         filePath = data.path;
       } catch (error) {
@@ -80,7 +78,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
       }
     }
     try {
-      const newWorkspace: workspace = {
+      const newWorkspace: Workspace = {
         data: null,
         created_at: new Date().toISOString(),
         icon_id: selectedEmoji,

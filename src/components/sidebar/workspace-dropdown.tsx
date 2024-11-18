@@ -1,17 +1,17 @@
 "use client";
 
 import { useAppState } from "@/lib/providers/state-provider";
-import { workspace } from "@/lib/supabase/supabase.types";
+import { Workspace } from "@/lib/supabase/supabase.types";
 import { useEffect, useState } from "react";
 import SelectedWorkspace from "./selected-workspace";
 import CustomDialogTrigger from "../global/custom-dialog";
 import WorkspaceCreator from "../global/workspace-creator";
 
 interface WorkspaceDropdownProps {
-  privateWorkspaces: workspace[] | [];
-  sharedWorkspaces: workspace[] | [];
-  collaboratingWorkspaces: workspace[] | [];
-  defaultValue: workspace | undefined;
+  privateWorkspaces: Workspace[] | [];
+  sharedWorkspaces: Workspace[] | [];
+  collaboratingWorkspaces: Workspace[] | [];
+  defaultValue: Workspace | undefined;
 }
 
 const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
@@ -45,10 +45,20 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
     dispatch,
   ]);
 
-  const handleSelect = (option: workspace) => {
+  const handleSelect = (option: Workspace) => {
     setSelectedOption(option);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (state.workspaces.length > 0) {
+      const findSelectedWorkspace = state.workspaces.find(
+        (workspace) => workspace.id === defaultValue?.id
+      );
+      if (findSelectedWorkspace) setSelectedOption(findSelectedWorkspace);
+    }
+  }, [defaultValue?.id, state.workspaces]);
+
   return (
     <div className="relative inline-block text-left">
       <div>
@@ -81,7 +91,6 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                     <SelectedWorkspace
                       key={option.id}
                       workspace={option}
-                      //idk it will work or not
                       onClick={() => handleSelect(option)}
                     />
                   ))}
@@ -95,7 +104,6 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                     <SelectedWorkspace
                       key={option.id}
                       workspace={option}
-                      //idk it will work or not
                       onClick={() => handleSelect(option)}
                     />
                   ))}

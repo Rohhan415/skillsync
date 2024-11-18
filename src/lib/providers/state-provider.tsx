@@ -8,12 +8,12 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { File, Folder, workspace } from "../supabase/supabase.types";
+import { File, Folder, Workspace } from "../supabase/supabase.types";
 import { usePathname } from "next/navigation";
 import { getFiles } from "../supabase/queries";
 
 export type appFoldersType = Folder & { files: File[] | [] };
-export type appWorkspacesType = workspace & {
+export type appWorkspacesType = Workspace & {
   folders: appFoldersType[] | [];
 };
 

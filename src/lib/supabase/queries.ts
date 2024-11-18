@@ -1,7 +1,7 @@
 "use server";
 import { supabase } from "./supabase-client";
 import { validate } from "uuid";
-import { File, Folder, User, workspace } from "./supabase.types";
+import { File, Folder, User, Workspace } from "./supabase.types";
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -41,7 +41,7 @@ export const getFiles = async (folderId: string) => {
   }
 };
 
-export const createWorkspace = async (workspace: workspace) => {
+export const createWorkspace = async (workspace: Workspace) => {
   try {
     const { data, error } = await supabase
       .from("workspaces") // Replace with your table name
@@ -227,6 +227,43 @@ export const addCollaborators = async (users: User[], workspaceId: string) => {
   }
 };
 
+export const removeCollaborators = async (
+  users: User[],
+  workspaceId: string
+) => {
+  for (const user of users) {
+    try {
+      // Check if the user exists as a collaborator
+      const { data: userExists, error: findError } = await supabase
+        .from("collaborators")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("workspace_id", workspaceId)
+        .single();
+
+      if (findError) {
+        console.error(`Error finding collaborator: ${findError.message}`);
+        continue;
+      }
+
+      if (userExists) {
+        // Remove the user as a collaborator
+        const { error: deleteError } = await supabase
+          .from("collaborators")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("workspace_id", workspaceId);
+
+        if (deleteError) {
+          console.error(`Error deleting collaborator: ${deleteError.message}`);
+        }
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+  }
+};
+
 export const getUsersFromSearch = async (email: string) => {
   if (!email) return [];
 
@@ -303,5 +340,50 @@ export const updateFile = async (file: Partial<Folder>, fileId: string) => {
   } catch (error) {
     console.log(error);
     return { data: null, error: "Error" };
+  }
+};
+
+export const updateWorkspace = async (
+  workspace: Partial<Workspace>,
+  workspaceId: string
+) => {
+  if (!workspaceId) return { data: null, error: "Workspace ID is required" };
+
+  try {
+    const { data, error } = await supabase
+      .from("workspaces")
+      .update(workspace)
+      .eq("id", workspaceId);
+
+    if (error) {
+      console.log(error);
+      return { data: null, error: "Error updating workspace" };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: "Unexpected error occurred" };
+  }
+};
+
+export const deleteWorkspace = async (workspaceId: string) => {
+  if (!workspaceId) return { data: null, error: "Workspace ID is required" };
+
+  try {
+    const { error } = await supabase
+      .from("workspaces")
+      .delete()
+      .eq("id", workspaceId);
+
+    if (error) {
+      console.error(`Error deleting workspace: ${error.message}`);
+      return { data: null, error: "Error deleting workspace" };
+    }
+
+    return { data: "Workspace deleted successfully", error: null };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { data: null, error: "Unexpected error occurred" };
   }
 };

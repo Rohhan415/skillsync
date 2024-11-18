@@ -1,5 +1,5 @@
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
-import { User, workspace } from "@/lib/supabase/supabase.types";
+import { User, Workspace } from "@/lib/supabase/supabase.types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Label } from "../ui/label";
@@ -47,7 +47,7 @@ const WorkspaceCreator = () => {
     console.log(user, "user");
 
     if (user?.id) {
-      const newWorkspace: workspace = {
+      const newWorkspace: Workspace = {
         data: null,
         created_at: new Date().toISOString(),
         icon_id: "",

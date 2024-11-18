@@ -524,7 +524,7 @@ export type CompositeTypes<
   ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
   : never;
 
-export type workspace = InferSelectModel<typeof workspaces>;
+export type Workspace = InferSelectModel<typeof workspaces>;
 export type User = InferSelectModel<typeof users>;
 export type Folder = InferSelectModel<typeof folders>;
 export type File = InferSelectModel<typeof files>;

@@ -5,7 +5,6 @@ import { Folder } from "@/lib/supabase/supabase.types";
 import { useEffect, useState, useMemo } from "react";
 import TooltipComponent from "../global/tooltip-component";
 import { PlusIcon } from "lucide-react";
-
 import { v4 } from "uuid";
 import { createFolder } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";

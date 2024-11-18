@@ -13,6 +13,7 @@ import TooltipComponent from "../global/tooltip-component";
 import { PlusIcon, Trash } from "lucide-react";
 import { v4 } from "uuid";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
+import { AccordionContent } from "@radix-ui/react-accordion";
 
 interface DropdownProps {
   title: string;
@@ -23,15 +24,7 @@ interface DropdownProps {
   disabled?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
-  title,
-  id,
-  listType,
-  iconId,
-  children,
-  disabled,
-  ...props
-}) => {
+const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
   const { toast } = useToast();
   const { user } = useSupabaseUser();
   const { state, dispatch, workspaceId, folderId } = useAppState();
@@ -80,7 +73,14 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
     if (folderId?.length === 2 && folderId[1]) {
       if (!fileTitle) return;
-      // Update file title
+      const { error } = await updateFile({ title: fileTitle }, folderId[1]);
+      toast({
+        title: error ? "Error" : "Success",
+        variant: error ? "destructive" : undefined,
+        description: error
+          ? "Could not update the file title"
+          : "File title updated successfully",
+      });
     }
   };
 
@@ -308,6 +308,24 @@ const Dropdown: React.FC<DropdownProps> = ({
           </div>
         </div>
       </AccordionTrigger>
+      <AccordionContent>
+        {state.workspaces
+          .find((workspace) => workspace.id === workspaceId)
+          ?.folders.find((folder) => folder.id === id)
+          ?.files.filter((file) => !file.in_trash)
+          .map((file) => {
+            const customField = `${id}folder${file.id}`;
+            return (
+              <Dropdown
+                key={file.id}
+                title={file.title}
+                id={customField}
+                listType="file"
+                iconId={file.icon_id}
+              />
+            );
+          })}
+      </AccordionContent>
     </AccordionItem>
   );
 };
