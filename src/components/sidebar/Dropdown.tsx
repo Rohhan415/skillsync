@@ -27,7 +27,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
   const { toast } = useToast();
   const { user } = useSupabaseUser();
-  const { state, dispatch, workspaceId, folderId } = useAppState();
+  const { state, dispatch, workspaceId } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
@@ -54,11 +54,16 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
   }, [state, listType, workspaceId, id, title]);
   // If there will be more than 2 types of lists, consider using a switch statement
   const navigatePage = (accordionId: string, type: string) => {
-    const path =
-      type === "file"
-        ? `/dashboard/${workspaceId}/${folderId}/${accordionId}`
-        : `/dashboard/${workspaceId}/${accordionId}`;
-    router.push(path);
+    if (type === "folder") {
+      router.push(`/dashboard/${workspaceId}/${accordionId}`);
+    }
+    if (type === "file") {
+      router.push(
+        `/dashboard/${workspaceId}/${accordionId.split("folder")[0]}/${
+          accordionId.split("folder")[1]
+        }`
+      );
+    }
   };
 
   const handleDoubleClick = () => {
@@ -183,11 +188,11 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
       workspace_id: workspaceId,
       banner_url: "",
     };
+    const { error } = await createFile(newFile);
     dispatch({
       type: "ADD_FILE",
       payload: { file: newFile, folderId: id, workspaceId },
     });
-    const { error } = await createFile(newFile);
     if (error) {
       toast({
         title: "Error",
@@ -195,6 +200,8 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
         description: "Could not create a file",
       });
     } else {
+      console.log("File created");
+
       toast({
         title: "Success",
         description: "File created.",
@@ -315,6 +322,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
           ?.files.filter((file) => !file.in_trash)
           .map((file) => {
             const customField = `${id}folder${file.id}`;
+
             return (
               <Dropdown
                 key={file.id}

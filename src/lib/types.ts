@@ -1,3 +1,6 @@
+import { Socket, Server as NetServer } from "net";
+import { Server as SocketIoServer } from "socket.io";
+import { NextApiResponse } from "next";
 import { z } from "zod";
 
 export const FormSchema = z.object({
@@ -12,3 +15,11 @@ export const CreateWorkspaceFormSchema = z.object({
     .min(1, "Workspace name is required"),
   logo: z.any(),
 });
+
+export type NextApiResponseServerIo = NextApiResponse & {
+  socket: Socket & {
+    server: NetServer & {
+      io: SocketIoServer;
+    };
+  };
+};

@@ -117,15 +117,17 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       >
         {folders
           .filter((folder) => !folder.in_trash)
-          .map((folder) => (
-            <Dropdown
-              key={folder.id}
-              title={folder.title}
-              id={folder.id}
-              listType={"folder"}
-              iconId={folder.icon_id}
-            />
-          ))}
+          .map((folder) => {
+            return (
+              <Dropdown
+                key={folder.id}
+                title={folder.title}
+                id={folder.id}
+                listType={"folder"}
+                iconId={folder.icon_id}
+              />
+            );
+          })}
       </Accordion>
     </>
   );

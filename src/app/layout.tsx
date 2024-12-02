@@ -4,6 +4,8 @@ import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import AppStateProvider from "@/lib/providers/state-provider";
 import { SupabaseUserProvider } from "@/lib/providers/supabase-user-provider";
+import { SocketProvider } from "@/lib/providers/socket-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = DM_Sans({ subsets: ["latin"] });
 
@@ -24,9 +26,12 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <SupabaseUserProvider>
-            <AppStateProvider>{children}</AppStateProvider>
-          </SupabaseUserProvider>
+          <AppStateProvider>
+            <SupabaseUserProvider>
+              <SocketProvider>{children}</SocketProvider>
+              <Toaster />
+            </SupabaseUserProvider>
+          </AppStateProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -61,6 +61,32 @@ export const createWorkspace = async (workspace: Workspace) => {
   }
 };
 
+export const getFolderDetails = async (folderId: string) => {
+  const isValid = validate(folderId);
+  if (!isValid) {
+    return { data: [], error: "Invalid folder ID" };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("folders")
+      .select("*")
+      .eq("id", folderId)
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Error fetching folder details:", error);
+      return { data: [], error: "Error fetching folder details" };
+    }
+
+    return { data: [data], error: null };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { data: [], error: "Unexpected error occurred" };
+  }
+};
+
 export const getFolders = async (workspaceId: string) => {
   const isValid = validate(workspaceId);
   if (!isValid) {
@@ -324,6 +350,26 @@ export const updateFolder = async (
   }
 };
 
+export const deleteFolder = async (folderId: string) => {
+  if (!folderId) return;
+  const { error } = await supabase.from("folders").delete().eq("id", folderId);
+
+  if (error) {
+    console.error("Error deleting folder:", error);
+    throw error;
+  }
+};
+
+export const deleteFile = async (fileId: string) => {
+  if (!fileId) return;
+  const { error } = await supabase.from("files").delete().eq("id", fileId);
+
+  if (error) {
+    console.error("Error deleting file:", error);
+    throw error;
+  }
+};
+
 export const updateFile = async (file: Partial<Folder>, fileId: string) => {
   try {
     const { data, error } = await supabase
@@ -340,6 +386,33 @@ export const updateFile = async (file: Partial<Folder>, fileId: string) => {
   } catch (error) {
     console.log(error);
     return { data: null, error: "Error" };
+  }
+};
+
+export const getFileDetails = async (fileId: string) => {
+  const isValid = validate(fileId);
+
+  if (!isValid) {
+    return { data: [], error: "Invalid file ID" };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("files")
+      .select("*")
+      .eq("id", fileId)
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("🔴 Error fetching file details:", error);
+      return { data: [], error: "Error fetching file details" };
+    }
+
+    return { data: [data], error: null };
+  } catch (error) {
+    console.error("🔴 Unexpected error:", error);
+    return { data: [], error: "Unexpected error occurred" };
   }
 };
 
@@ -385,5 +458,37 @@ export const deleteWorkspace = async (workspaceId: string) => {
   } catch (error) {
     console.error("Unexpected error:", error);
     return { data: null, error: "Unexpected error occurred" };
+  }
+};
+
+export const getWorkspaceDetails = async (workspaceId: string) => {
+  const isValid = validate(workspaceId);
+  if (!isValid) {
+    return {
+      data: [],
+      error: "Invalid workspace ID",
+    };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("workspaces")
+      .select("*")
+      .eq("id", workspaceId)
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return {
+        data: [],
+        error: error.message || "Error fetching workspace details",
+      };
+    }
+
+    return { data: data ? [data] : [], error: null };
+  } catch (error) {
+    console.error(error);
+    return { data: [], error: "Unexpected error occurred" };
   }
 };
