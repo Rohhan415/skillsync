@@ -171,8 +171,9 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
       )
     `
     )
-    .eq("user_id", userId)
-    .eq("workspaces.workspace_owner", userId);
+    .eq("user_id", userId);
+
+  console.log(data, "joł data");
 
   if (error) {
     console.error("Error fetching collaborating workspaces:", error);
@@ -210,7 +211,7 @@ export const getSharedWorkspaces = async (userId: string) => {
     .eq("workspace_owner", userId)
     .order("created_at", { ascending: true });
 
-  //console.log(sharedWorkspaces, "sharedWorkspaces");
+  // console.log(sharedWorkspaces, "jwwwoł");
 
   if (error) {
     console.error("Error fetching shared workspaces:", error);
@@ -250,6 +251,42 @@ export const addCollaborators = async (users: User[], workspaceId: string) => {
         console.error("Error adding collaborator:", insertError.message);
       }
     }
+  }
+};
+
+export const getCollaborators = async (workspaceId: string) => {
+  try {
+    const { data: collaborators, error: collaboratorsError } = await supabase
+      .from("collaborators")
+      .select("user_id")
+      .eq("workspace_id", workspaceId);
+
+    if (collaboratorsError) {
+      console.error("🔴 Error fetching collaborators:", collaboratorsError);
+      return [];
+    }
+
+    if (!collaborators || !collaborators.length) {
+      return [];
+    }
+
+    // Fetch user information for each collaborator
+    const userIds = collaborators.map((collaborator) => collaborator.user_id);
+    const { data: users, error: usersError } = await supabase
+      .from("users")
+      .select("*")
+      .in("id", userIds);
+
+    if (usersError) {
+      console.error("🔴 Error fetching user information:", usersError);
+      return [];
+    }
+
+    // Filter out any undefined or null results
+    return users || [];
+  } catch (error) {
+    console.error("🔴 Unexpected error:", error);
+    return [];
   }
 };
 
@@ -491,4 +528,18 @@ export const getWorkspaceDetails = async (workspaceId: string) => {
     console.error(error);
     return { data: [], error: "Unexpected error occurred" };
   }
+};
+
+export const findUser = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching user: ${error.message}`);
+  }
+
+  return data;
 };

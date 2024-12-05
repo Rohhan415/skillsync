@@ -6,13 +6,22 @@ import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { User, Workspace } from "@/lib/supabase/supabase.types";
 import { Separator } from "@radix-ui/react-select";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Briefcase, Lock, Plus, Share } from "lucide-react";
+import LogoutButton from "../global/logout-button";
+import {
+  Briefcase,
+  Lock,
+  LogOut,
+  Plus,
+  Share,
+  User as UserIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import {
   addCollaborators,
   deleteWorkspace,
+  getCollaborators,
   removeCollaborators,
   updateWorkspace,
 } from "@/lib/supabase/queries";
@@ -31,6 +40,16 @@ import CollaboratorSearch from "../global/collaborator-search";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "../ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
+import ProfileIcon from "../icons/Profile-Icon";
 
 const SettingsForm = () => {
   const router = useRouter();
@@ -50,6 +69,7 @@ const SettingsForm = () => {
   const addCollaborator = async (profile: User) => {
     if (!workspaceId) return;
     await addCollaborators([profile], workspaceId);
+
     setCollaborators([...collaborators, profile]);
   };
 
@@ -90,6 +110,20 @@ const SettingsForm = () => {
     }, 500);
   };
 
+  const AlertConfirmHandler = async () => {
+    if (!workspaceId) return;
+    if (collaborators.length > 0) {
+      await removeCollaborators(collaborators, workspaceId);
+    }
+    setPermissions("private");
+    setOpenAlertMessage(false);
+  };
+
+  const onPermissionsChangeHandler = (val: string) => {
+    (() =>
+      val === "private" ? setOpenAlertMessage(true) : setPermissions(val))();
+  };
+
   const onChangeWorkspaceLogoHandler = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -118,6 +152,18 @@ const SettingsForm = () => {
   // fetching avatars
   // get workspace details
   //get all collaborators
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    const fetchCollaborators = async () => {
+      const response = await getCollaborators(workspaceId);
+      if (response.length) {
+        setPermissions("shared");
+        setCollaborators(response);
+      }
+    };
+    fetchCollaborators();
+  }, [workspaceId]);
 
   useEffect(() => {
     const showingWorkspace = state.workspaces.find(
@@ -165,12 +211,7 @@ const SettingsForm = () => {
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
-        <Select
-          onValueChange={(value) => {
-            setPermissions(value);
-          }}
-          defaultValue={permissions}
-        >
+        <Select onValueChange={onPermissionsChangeHandler} value={permissions}>
           <SelectTrigger className="w-full h-26 -mt-3">
             <SelectValue />
           </SelectTrigger>
@@ -278,7 +319,65 @@ const SettingsForm = () => {
             Delete Workspace
           </Button>
         </Alert>
+        <p className="flex items-center gap-2 mt-6">
+          <UserIcon size={24} /> Profile
+        </p>
+        <Separator />
+        <div className="flex items-center">
+          <Avatar>
+            {/* WIP ADD USER PROFILE PIC */}
+            {/* <AvatarImage src={user.} /> */}
+            <AvatarFallback>
+              <ProfileIcon />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col ml-6">
+            <small className="text-muted-foreground cursor-not-allowed">
+              {user ? user.email : ""}
+            </small>
+            <Label
+              htmlFor="profilePicture"
+              className="text-sm text-muted-foreground"
+            >
+              Profile Picture
+            </Label>
+            <Input
+              name="profilePicture"
+              type="file"
+              accept="image/*"
+              placeholder="Profile Picture"
+              // onChange={onChangeProfilePicture}
+              disabled={uploadingProfilePicture}
+            />
+          </div>
+        </div>
+        <LogoutButton>
+          <div className="flex items-center">
+            {" "}
+            <LogOut />
+          </div>
+        </LogoutButton>
+        <p></p>
       </>
+      <AlertDialog open={openAlertMessage}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDescription>
+              Changing the workspace from Shared to Private will permanently
+              remove all collaborators.
+            </AlertDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenAlertMessage(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={AlertConfirmHandler}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

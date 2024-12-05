@@ -2,7 +2,7 @@
 
 import { useAppState } from "@/lib/providers/state-provider";
 import { useMemo, useState } from "react";
-import { AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { Accordion, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import EmojiPicker from "../global/emoji-picker";
@@ -259,82 +259,84 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
   };
 
   return (
-    <AccordionItem
-      value={id}
-      className={listStyles}
-      onClick={(e) => {
-        e.stopPropagation();
-        navigatePage(id, listType);
-      }}
-    >
-      <AccordionTrigger
-        id={listType}
-        className="hover:no-underline p-2 dark:text-muted-foreground text-sm"
-        disabled={listType === "file"}
+    <Accordion type="single" collapsible>
+      <AccordionItem
+        value={id}
+        className={listStyles}
+        onClick={(e) => {
+          e.stopPropagation();
+          navigatePage(id, listType);
+        }}
       >
-        <div className={groupIdentifies}>
-          <div className="flex gap-4 justify-center items-center overflow-hidden">
-            <div className="relative">
-              <EmojiPicker getValue={onChangeEmoji}>{iconId}</EmojiPicker>
-            </div>
-            <input
-              type="text"
-              value={listType === "folder" ? folderTitle : fileTitle}
-              className={clsx(
-                "outline-none overflow-hidden w-[140px] text-Neutrals/neutrals-7",
-                {
-                  "bg-muted cursor-text": isEditing,
-                  "bg-transparent cursor-pointer": !isEditing,
+        <AccordionTrigger
+          id={listType}
+          className="hover:no-underline p-2 dark:text-muted-foreground text-sm"
+          disabled={listType === "file"}
+        >
+          <div className={groupIdentifies}>
+            <div className="flex gap-4 justify-center items-center overflow-hidden">
+              <div className="relative">
+                <EmojiPicker getValue={onChangeEmoji}>{iconId}</EmojiPicker>
+              </div>
+              <input
+                type="text"
+                value={listType === "folder" ? folderTitle : fileTitle}
+                className={clsx(
+                  "outline-none overflow-hidden w-[140px] text-Neutrals/neutrals-7",
+                  {
+                    "bg-muted cursor-text": isEditing,
+                    "bg-transparent cursor-pointer": !isEditing,
+                  }
+                )}
+                readOnly={!isEditing}
+                onDoubleClick={handleDoubleClick}
+                onBlur={handleBlur}
+                onChange={
+                  listType === "folder" ? folderTitleChange : fileTitleChange
                 }
-              )}
-              readOnly={!isEditing}
-              onDoubleClick={handleDoubleClick}
-              onBlur={handleBlur}
-              onChange={
-                listType === "folder" ? folderTitleChange : fileTitleChange
-              }
-            />
-          </div>
-          <div className={hoverStyles}>
-            <TooltipComponent message="Delete Folder">
-              <Trash
-                onClick={moveToTrash}
-                size={15}
-                className="hover:dark:text-white dark:dark:text-neutral-700 transition-colors"
               />
-            </TooltipComponent>
-            {listType === "folder" && !isEditing && (
-              <TooltipComponent message="Add File">
-                <PlusIcon
-                  onClick={addNewFile}
+            </div>
+            <div className={hoverStyles}>
+              <TooltipComponent message="Delete Folder">
+                <Trash
+                  onClick={moveToTrash}
                   size={15}
-                  className="hover:dark:text-white dark:text-neutral-700 transition-colors"
+                  className="hover:dark:text-white dark:dark:text-neutral-700 transition-colors"
                 />
               </TooltipComponent>
-            )}
+              {listType === "folder" && !isEditing && (
+                <TooltipComponent message="Add File">
+                  <PlusIcon
+                    onClick={addNewFile}
+                    size={15}
+                    className="hover:dark:text-white dark:text-neutral-700 transition-colors"
+                  />
+                </TooltipComponent>
+              )}
+            </div>
           </div>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent>
-        {state.workspaces
-          .find((workspace) => workspace.id === workspaceId)
-          ?.folders.find((folder) => folder.id === id)
-          ?.files.filter((file) => !file.in_trash)
-          .map((file) => {
-            const customField = `${id}folder${file.id}`;
+        </AccordionTrigger>
+        <AccordionContent>
+          {state.workspaces
+            .find((workspace) => workspace.id === workspaceId)
+            ?.folders.find((folder) => folder.id === id)
+            ?.files.filter((file) => !file.in_trash)
+            .map((file) => {
+              const customField = `${id}folder${file.id}`;
 
-            return (
-              <Dropdown
-                key={file.id}
-                title={file.title}
-                id={customField}
-                listType="file"
-                iconId={file.icon_id}
-              />
-            );
-          })}
-      </AccordionContent>
-    </AccordionItem>
+              return (
+                <Dropdown
+                  key={file.id}
+                  title={file.title}
+                  id={customField}
+                  listType="file"
+                  iconId={file.icon_id}
+                />
+              );
+            })}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

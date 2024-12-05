@@ -39,12 +39,8 @@ const WorkspaceCreator = () => {
   };
 
   const createItem = async () => {
-    console.log("Creating Workspace");
-
     setIsLoading(true);
     const uuid = v4();
-
-    console.log(user, "user");
 
     if (user?.id) {
       const newWorkspace: Workspace = {

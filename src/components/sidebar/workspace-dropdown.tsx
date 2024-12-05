@@ -109,6 +109,19 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                   ))}
                 </>
               )}
+              {!!collaboratingWorkspaces.length && (
+                <>
+                  <p className="text-muted-foreground">Collaborating</p>
+                  <hr />
+                  {collaboratingWorkspaces.map((option) => (
+                    <SelectedWorkspace
+                      key={option.id}
+                      workspace={option}
+                      onClick={handleSelect}
+                    />
+                  ))}
+                </>
+              )}
             </div>
             <CustomDialogTrigger
               header="Create A Workspace"

@@ -13,12 +13,13 @@ import WorkspaceDropdown from "./workspace-dropdown";
 import NativeNavigation from "./native-navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import FoldersDropdownList from "./folders-dropdown-list";
+
 interface SidebarProps {
   params: { workspaceId: string };
   className?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = async ({ params }) => {
+const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
@@ -44,7 +45,8 @@ const Sidebar: React.FC<SidebarProps> = async ({ params }) => {
   return (
     <aside
       className={twMerge(
-        "hidden sm:flex sm:flex-col w-[280px] shrink-0 p-4 md:gap-4 !justify-between"
+        "hidden sm:flex sm:flex-col w-[280px] shrink-0 p-4 md:gap-4 !justify-between",
+        className
       )}
     >
       <div>
