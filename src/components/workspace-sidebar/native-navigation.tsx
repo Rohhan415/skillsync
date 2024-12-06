@@ -35,11 +35,9 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
           </li>
         </Settings>
         <Trash>
-          <li>
-            <li className="group/native flex text-neutral-50/neutrals-7 transition-all  gap-2">
-              <TrashIcon />
-              <span>Trash</span>
-            </li>
+          <li className="group/native flex text-neutral-50/neutrals-7 transition-all  gap-2">
+            <TrashIcon />
+            <span>Trash</span>
           </li>
         </Trash>
       </ul>{" "}

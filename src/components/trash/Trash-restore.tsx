@@ -6,9 +6,7 @@ import { FileIcon, FolderIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface TrashRestoreProps {
-  children: React.ReactNode;
-}
+type TrashRestoreProps = object;
 
 const TrashRestore: React.FC<TrashRestoreProps> = () => {
   const { state, workspaceId, folderId } = useAppState();

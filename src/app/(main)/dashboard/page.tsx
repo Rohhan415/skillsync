@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import DashboardSetup from "@/components/dashboard-setup/dashboard-setup";
 import { getUserSubscriptionStatus } from "@/lib/supabase/queries";
+import DashboardSidebar from "@/components/dashboard-sidebar/Sidebar";
+import Calendar from "@/components/calendar/Calendar";
 
 async function DashboardPage() {
   const supabase = createServerComponentClient({ cookies });
@@ -25,18 +27,17 @@ async function DashboardPage() {
 
   if (!workspace) {
     return (
-      <div className="bg-background h-screen w-screen flex justify-center items-center">
-        <DashboardSetup
-          subscription={subscription}
-          user={user}
-        ></DashboardSetup>
-      </div>
+      <>
+        <DashboardSidebar />
+        <div className="bg-background h-screen w-screen flex justify-center items-center">
+          <Calendar />
+          {/* <DashboardSetup subscription={subscription} user={user} /> */}
+        </div>
+      </>
     );
   }
 
   redirect(`/dashboard/${workspace.id}`);
-
-  return <div>Page</div>;
 }
 
 export default DashboardPage;

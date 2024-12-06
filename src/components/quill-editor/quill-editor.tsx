@@ -416,8 +416,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   return (
     <>
-      {isConnected ? "yes" : "no"}
-      <div className="relative">
+      <div className=" ">
         {details.in_trash && (
           <article className=" py-2 z-40 bg-[#EB5757] md:flex-row flex-col justify-center items-center gap-4 flex-wrap">
             <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
@@ -497,10 +496,10 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         </span>
       </div>
 
-      <div className="flex justify-center items-center flex-col mt-2 relative">
+      <div className=" flex-grow flex  justify-start items-center flex-col mt-2 relative">
         <div
           id="container"
-          className="max-w-[800px] flex flex-col items-center"
+          className="max-w-[800px] h-full pb-8  flex flex-col items-center"
           ref={wrapperRef}
         ></div>
       </div>

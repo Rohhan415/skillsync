@@ -133,7 +133,7 @@ body {
 }
 
 .ql-container {
-  @apply !border-none w-full h-full;
+  @apply !border-none w-full h-full !bg-card  rounded;
 }
 
 .ql-editor > p,
