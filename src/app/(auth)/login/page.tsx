@@ -43,68 +43,70 @@ function LoginPage() {
     router.replace("/dashboard");
   };
   return (
-    <Form {...form}>
-      <form
-        onChange={() => {
-          if (submitError) setSubmitError("");
-        }}
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col"
-      >
-        <Link href="/" className="w-full flex justify-left items-center ">
-          <Image src={Logo} alt="logo" width={50} height={50} />
-          <span className="font-semibold dark:text-white text-4xl first-letter:ml-2 ">
-            SkillSync.
-          </span>
-        </Link>
-        <FormDescription className="text-foreground/60">
-          All-in-One Collaboration and Productivity
-        </FormDescription>
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input type="email" placeholder="Email" {...field}></Input>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  {...field}
-                ></Input>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        {submitError && <FormMessage>{submitError}</FormMessage>}
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className=" w-full p-6"
-          size="lg"
+    <>
+      <Form {...form}>
+        <form
+          onChange={() => {
+            if (submitError) setSubmitError("");
+          }}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col"
         >
-          {!isLoading ? "Login" : <Loader />}
-        </Button>
-        <span className="self-center">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-primary">
-            Sign Up
+          <Link href="/" className="w-full flex justify-left items-center ">
+            <Image src={Logo} alt="logo" width={50} height={50} />
+            <span className="font-semibold dark:text-white text-4xl first-letter:ml-2 ">
+              SkillSync.
+            </span>
           </Link>
-        </span>
-      </form>
-    </Form>
+          <FormDescription className="text-foreground/60">
+            All-in-One Collaboration and Productivity
+          </FormDescription>
+          <FormField
+            disabled={isLoading}
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input type="email" placeholder="Email" {...field}></Input>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            disabled={isLoading}
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    {...field}
+                  ></Input>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          {submitError && <FormMessage>{submitError}</FormMessage>}
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className=" w-full p-6"
+            size="lg"
+          >
+            {!isLoading ? "Login" : <Loader />}
+          </Button>
+          <span className="self-center">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-primary">
+              Sign Up
+            </Link>
+          </span>
+        </form>
+      </Form>
+    </>
   );
 }
 

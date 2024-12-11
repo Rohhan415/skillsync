@@ -49,16 +49,19 @@ export type Database = {
       collaborators: {
         Row: {
           created_at: string;
+          id: string;
           user_id: string;
           workspace_id: string;
         };
         Insert: {
           created_at?: string;
+          id?: string;
           user_id: string;
           workspace_id: string;
         };
         Update: {
           created_at?: string;
+          id?: string;
           user_id?: string;
           workspace_id?: string;
         };
@@ -93,6 +96,47 @@ export type Database = {
           stripe_customer_id?: string | null;
         };
         Relationships: [];
+      };
+      events: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          duration_in_minutes: number;
+          id: string;
+          is_active: boolean;
+          name: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          duration_in_minutes: number;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          duration_in_minutes?: number;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fk_events_users";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       files: {
         Row: {
@@ -267,6 +311,76 @@ export type Database = {
         };
         Relationships: [];
       };
+      schedule_availabilities: {
+        Row: {
+          created_at: string;
+          day_of_week: Database["public"]["Enums"]["day"];
+          end_time: string;
+          id: string;
+          schedule_id: string;
+          start_time: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          day_of_week: Database["public"]["Enums"]["day"];
+          end_time: string;
+          id?: string;
+          schedule_id: string;
+          start_time: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          day_of_week?: Database["public"]["Enums"]["day"];
+          end_time?: string;
+          id?: string;
+          schedule_id?: string;
+          start_time?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fk_schedule_availabilities_schedules";
+            columns: ["schedule_id"];
+            isOneToOne: false;
+            referencedRelation: "schedules";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      schedules: {
+        Row: {
+          created_at: string;
+          id: string;
+          timezone: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          timezone: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          timezone?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fk_schedules_users";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       subscriptions: {
         Row: {
           cancel_at: string | null;
@@ -410,6 +524,14 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      day:
+        | "Sunday"
+        | "Monday"
+        | "Tuesday"
+        | "Wednesday"
+        | "Thursday"
+        | "Friday"
+        | "Saturday";
       pricing_plan_interval: "day" | "week" | "month" | "year";
       pricing_type: "one_time" | "recurring";
       subscription_status:

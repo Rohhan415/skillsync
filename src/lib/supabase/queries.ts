@@ -2,6 +2,8 @@
 import { supabase } from "./supabase-client";
 import { validate } from "uuid";
 import { File, Folder, User, Workspace } from "./supabase.types";
+import { eventFormSchema } from "../schema/events";
+import { z } from "zod";
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -173,8 +175,6 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
     )
     .eq("user_id", userId);
 
-  console.log(data, "joł data");
-
   if (error) {
     console.error("Error fetching collaborating workspaces:", error);
     return [];
@@ -210,8 +210,6 @@ export const getSharedWorkspaces = async (userId: string) => {
     )
     .eq("workspace_owner", userId)
     .order("created_at", { ascending: true });
-
-  // console.log(sharedWorkspaces, "jwwwoł");
 
   if (error) {
     console.error("Error fetching shared workspaces:", error);
@@ -543,3 +541,91 @@ export const findUser = async (userId: string) => {
 
   return data;
 };
+
+export async function getEvents(userId: string) {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Error fetching user: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function insertEvent(
+  data: z.infer<typeof eventFormSchema>,
+  userId: string
+) {
+  const { error } = await supabase.from("events").insert({
+    ...data,
+    user_id: userId,
+    duration_in_minutes: data.duration_in_minutes,
+    is_active: data.is_active,
+  });
+
+  if (error) {
+    throw new Error(`Error inserting event: ${error.message}`);
+  }
+
+  return { message: "Event inserted successfully" };
+}
+
+export async function getEventById(userId: string, eventId: string) {
+  console.log(userId, eventId, "sisi");
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("id", eventId)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching event: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function updateEventDetails(
+  id: string,
+  userId: string,
+  data: Record<string, unknown>
+) {
+  const {
+    error,
+    data: updatedRows,
+    count,
+  } = await supabase
+    .from("events")
+    .update({ ...data })
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("*");
+
+  if (count === 0) return { error: true };
+
+  if (error) {
+    throw new Error(`Error updating event: ${error.message}`);
+  }
+
+  return { updatedRows, affectedRows: count };
+}
+
+export async function deleteEventQuery(eventId: string, userId: string) {
+  const { error, data } = await supabase
+    .from("events")
+    .delete()
+    .eq("id", eventId)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw new Error(`Error deleting event: ${error.message}`);
+  }
+
+  return { message: "Event deleted successfully", data };
+}

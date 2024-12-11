@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "whitespace-nowrap bg-primary text-lg text-primary-foreground shadow-2wxl shadow-indigo-600/50 border-2 rounded-lg",
+        destructiveGhost:
+          " text-destructive border border-destructive  hover:text-destructive-foreground hover:bg-destructive/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 
-const DashboardSidebar = () => {
+const DashboardSidebar = async () => {
   return (
     <aside
       className={twMerge(
