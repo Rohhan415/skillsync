@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { z } from "zod";
-import { Subscription, Workspace } from "@/lib/supabase/supabase.types";
+import { Workspace } from "@/lib/supabase/supabase.types";
 import { createWorkspace } from "@/lib/supabase/queries";
 import { v4 } from "uuid";
 import { useRouter } from "next/navigation";
@@ -27,12 +27,8 @@ import Loader from "../global/Loader";
 
 interface DashboardSetupProps {
   user: AuthUser;
-  subscription: Subscription | null;
 }
-const DashboardSetup: React.FC<DashboardSetupProps> = ({
-  subscription,
-  user,
-}) => {
+const DashboardSetup: React.FC<DashboardSetupProps> = ({ user }) => {
   const router = useRouter();
   const { toast } = useToast();
   const { dispatch } = useAppState();
@@ -189,16 +185,6 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
               <small className="text-red-600">
                 {errors?.logo?.message?.toString()}
               </small>
-              {subscription?.status !== "active" && (
-                <small
-                  className="
-                  text-muted-foreground
-                  block
-              "
-                >
-                  To customize your workspace, you need to be on a Pro Plan
-                </small>
-              )}
             </div>
             <div className="self-end">
               <Button disabled={isLoading} type="submit">

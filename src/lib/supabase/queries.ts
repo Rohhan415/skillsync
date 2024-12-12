@@ -4,6 +4,9 @@ import { validate } from "uuid";
 import { File, Folder, User, Workspace } from "./supabase.types";
 import { eventFormSchema } from "../schema/events";
 import { z } from "zod";
+import { scheduleFormSchema } from "../schema/schedule";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -628,4 +631,140 @@ export async function deleteEventQuery(eventId: string, userId: string) {
   }
 
   return { message: "Event deleted successfully", data };
+}
+
+export async function getScheduleById(userId: string) {
+  const { data, error } = await supabase
+    .from("schedules")
+    .select(
+      `
+    *,
+    schedule_availabilities(*)
+  `
+    )
+    .eq("user_id", userId)
+    .limit(1) // Ensures we only fetch the first matching schedule
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    // PGRST116 is the code for "No rows found"
+    throw new Error(`Error fetching schedule: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+export async function saveSchedule(values: z.infer<typeof scheduleFormSchema>) {
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { success, data } = scheduleFormSchema.safeParse(values);
+  if (!success || !user) {
+    return { error: true };
+  }
+  const { availabilities, ...scheduleData } = data;
+
+  // Upsert the schedule and get the scheduleId
+  const { data: upsertSchedule, error: upsertError } = await supabase
+    .from("schedules")
+    .upsert({ ...scheduleData, user_id: user.id }, { onConflict: "user_id" })
+    .select("id")
+    .single();
+
+  if (upsertError || !upsertSchedule) {
+    return {
+      error: true,
+      message: upsertError?.message || "Failed to save schedule",
+    };
+  }
+
+  const scheduleId = upsertSchedule.id;
+
+  // Delete old availabilities for the schedule
+  const { error: deleteError } = await supabase
+    .from("schedule_availabilities")
+    .delete()
+    .eq("schedule_id", scheduleId);
+
+  if (deleteError) {
+    return { error: true, message: deleteError.message };
+  }
+
+  // Insert new availabilities if any exist
+  if (availabilities.length > 0) {
+    const formattedAvailabilities = availabilities.map((availability) => ({
+      ...availability,
+      schedule_id: scheduleId,
+    }));
+
+    const { error: insertError } = await supabase
+      .from("schedule_availabilities")
+      .insert(formattedAvailabilities);
+
+    if (insertError) {
+      console.log(insertError, "errorrr");
+      return { error: true, message: insertError.message };
+    }
+  }
+
+  return { success: true };
+}
+
+export async function getCalendarEvents(userId: string) {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("is_active", true);
+
+  if (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+
+  // Sort the data case-insensitively using TypeScript
+  const sortedData = data?.sort((a: { name: string }, b: { name: string }) => {
+    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+  });
+
+  return sortedData;
+}
+
+export async function getCalendarSchedule(userId: string) {
+  const { data: schedule, error } = await supabase
+    .from("schedules")
+    .select("*, schedule_availabilities(*)")
+    .eq("user_id", userId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    // Log the error if it’s not the "No rows found" error
+    console.error("Error fetching schedule:", error);
+    return [];
+  }
+
+  console.log(schedule, "schssssedule");
+
+  return schedule ? [schedule] : []; // Return the schedule as an array (to match the original intention)
+}
+
+export async function getEventSchedule(userId: string, eventId: string) {
+  const { data: event, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("is_active", true)
+    .eq("user_id", userId)
+    .eq("id", eventId)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    // Log the error if it’s not the "No rows found" error
+    console.error("Error fetching event:", error);
+    return null;
+  }
+
+  console.log(event, "event");
+
+  return event || null; // Return the event or null if not found
 }

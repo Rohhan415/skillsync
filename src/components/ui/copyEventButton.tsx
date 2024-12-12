@@ -38,6 +38,8 @@ const CopyEventButton = ({
 }) => {
   const [copyState, setCopyState] = useState<CopyState>("idle");
 
+
+
   const CopyIcon = getCopyIcon(copyState);
 
   return (

@@ -525,13 +525,13 @@ export type Database = {
     };
     Enums: {
       day:
-        | "Sunday"
-        | "Monday"
-        | "Tuesday"
-        | "Wednesday"
-        | "Thursday"
-        | "Friday"
-        | "Saturday";
+        | "sunday"
+        | "monday"
+        | "tuesday"
+        | "wednesday"
+        | "thursday"
+        | "friday"
+        | "saturday";
       pricing_plan_interval: "day" | "week" | "month" | "year";
       pricing_type: "one_time" | "recurring";
       subscription_status:

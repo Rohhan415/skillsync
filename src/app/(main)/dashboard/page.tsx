@@ -2,40 +2,36 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import DashboardSidebar from "@/components/dashboard-sidebar/Sidebar";
-import { google } from "googleapis";
-import oauth2Client from "@/lib/serverActions/google-auth";
+import { oAuth2Client } from "@/lib/serverActions/google-auth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Calendar from "@/components/calendar/Calendar";
+import DashboardSetup from "@/components/dashboard-setup/dashboard-setup";
 async function DashboardPage() {
   const supabase = createServerComponentClient({ cookies });
   const cookieStore = cookies();
   const accessToken = cookieStore.get("google_access_token");
   const scopes = ["https://www.googleapis.com/auth/calendar"];
-  const authURL = oauth2Client.generateAuthUrl({
+  const authURL = oAuth2Client.generateAuthUrl({
     access_type: "online",
     response_type: "code",
     scope: scopes,
   });
-
-  oauth2Client.setCredentials({ access_token: accessToken?.value });
-  const drive = google
-    .calendar("v3")
-    .events.list({ calendarId: "primary", auth: oauth2Client });
-
-  console.log(drive, " misissipi");
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) return;
 
+  console.log(user.id, "user id");
+
   const { data: workspace } = await supabase
     .from("workspaces")
     .select("*")
     .eq("workspace_owner", user.id)
-    .single();
+    .single(); // specjalnie zwraca null zeby pokazac okienko
+
+  console.log(workspace, "rrrrrrrrrrrr");
 
   if (!workspace) {
     return (
@@ -50,7 +46,7 @@ async function DashboardPage() {
             </Link>
           )}
 
-          {/* <DashboardSetup subscription={subscription} user={user} /> */}
+          <DashboardSetup user={user} />
         </div>
       </>
     );

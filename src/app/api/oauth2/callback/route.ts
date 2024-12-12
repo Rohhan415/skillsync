@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import oauth2Client from "@/lib/serverActions/google-auth";
+import { oAuth2Client } from "@/lib/serverActions/google-auth";
 import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const { tokens } = await oauth2Client.getToken(code);
+    const { tokens } = await oAuth2Client.getToken(code);
     cookies().set({
       name: "google_access_token",
       value: tokens.access_token ?? "",
