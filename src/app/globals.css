@@ -139,7 +139,7 @@ body {
 .ql-editor > p,
 ol,
 ul {
-  @apply dark:text-accent;
+  @apply dark:text-white;
 }
 
 @keyframes accordion-down {
