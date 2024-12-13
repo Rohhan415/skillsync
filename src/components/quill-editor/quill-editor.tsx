@@ -416,6 +416,14 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   return (
     <>
+      <Badge
+        variant="secondary"
+        className={`top-4 right-4 z-50 ${
+          isConnected ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+        }`}
+      >
+        {isConnected ? "Connected" : "Not Connected"}
+      </Badge>
       <div className=" ">
         {details.in_trash && (
           <article className=" py-2 z-40 bg-[#EB5757] md:flex-row flex-col justify-center items-center gap-4 flex-wrap">

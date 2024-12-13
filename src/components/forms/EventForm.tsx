@@ -59,10 +59,7 @@ const EventForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof eventFormSchema>) => {
-    if (!event) return;
-
-    const action =
-      event === null ? createEvent : updateEvent.bind(null, event.id);
+    const action = event ? updateEvent.bind(null, event.id) : createEvent;
 
     const eventData = await action(values);
 
