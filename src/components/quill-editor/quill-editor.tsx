@@ -267,6 +267,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         }
       }
     };
+    socket.off("receive-changes", socketHandler);
     socket.on("receive-cursor-move", socketHandler);
 
     return () => {
