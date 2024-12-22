@@ -63,6 +63,7 @@ export const EventCard: React.FC<EventCardProps> = ({
                   event_hour: eventHour,
                   duration_in_minutes: 60,
                   is_active: isActive,
+                  event_date: eventDate,
                 }}
               />
             }
