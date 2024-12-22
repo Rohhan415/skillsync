@@ -8,21 +8,6 @@ import { scheduleFormSchema } from "../schema/schedule";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-export const getUserSubscriptionStatus = async (userId: string) => {
-  try {
-    const { data } = await supabase
-      .from("subscriptions")
-      .select("*, prices(*)")
-      .eq("user_id", userId)
-      .single();
-
-    if (data) return { data, error: null };
-    else return { data: null, error: null };
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return { data: null, error: `Error` };
-  }
-};
 export const getFiles = async (folderId: string) => {
   const isValid = validate(folderId);
   if (!isValid) return { data: null, error: "Error" };
@@ -568,6 +553,7 @@ export async function insertEvent(
     user_id: userId,
     duration_in_minutes: data.duration_in_minutes,
     is_active: data.is_active,
+    event_hour: data.event_hour,
   });
 
   if (error) {
@@ -743,8 +729,6 @@ export async function getCalendarSchedule(userId: string) {
     console.error("Error fetching schedule:", error);
     return [];
   }
-
-  console.log(schedule, "schssssedule");
 
   return schedule ? [schedule] : []; // Return the schedule as an array (to match the original intention)
 }

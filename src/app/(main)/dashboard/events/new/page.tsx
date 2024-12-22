@@ -1,4 +1,4 @@
-import EventForm from "@/components/forms/EventForm";
+import EventForm from "@/components/calendar/EventForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const newPage = () => {

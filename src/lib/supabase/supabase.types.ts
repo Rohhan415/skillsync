@@ -101,6 +101,8 @@ export type Database = {
         Row: {
           created_at: string;
           description: string | null;
+          event_hour: string;
+          event_date: string;
           duration_in_minutes: number;
           id: string;
           is_active: boolean;

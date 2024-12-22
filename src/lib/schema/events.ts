@@ -4,6 +4,8 @@ export const eventFormSchema = z.object({
   name: z.string().min(1, "required"),
   description: z.string().optional(),
   is_active: z.boolean().default(true),
+  event_hour: z.string(),
+  event_date: z.string(),
   duration_in_minutes: z.coerce
     .number()
     .int()

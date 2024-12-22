@@ -154,7 +154,7 @@ const WorkspaceCreator = () => {
                   >
                     <div className="flex gap-4 items-center">
                       <Avatar>
-                        <AvatarImage /> <AvatarFallback>PJ</AvatarFallback>
+                        <AvatarImage /> <AvatarFallback>AV</AvatarFallback>
                       </Avatar>
                       <div className="text-sm gap-2 text-muted-foreground overflow-hidden overflow-ellipsis sm:w-[300px] w-[140px]">
                         {collaborators.email}

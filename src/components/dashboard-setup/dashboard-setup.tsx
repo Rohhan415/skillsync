@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import EmojiPicker from "../global/emoji-picker";
 import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -33,7 +32,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({ user }) => {
   const { toast } = useToast();
   const { dispatch } = useAppState();
   const supabase = createClientComponentClient();
-  const [selectedEmoji, setSelectedEmoji] = useState("🚮");
+  const [fileName, setFileName] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -77,7 +76,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({ user }) => {
       const newWorkspace: Workspace = {
         data: null,
         created_at: new Date().toISOString(),
-        icon_id: selectedEmoji,
+        icon_id: "",
         id: workspaceUUID,
         in_trash: "",
         title: value.workspaceName,
@@ -113,45 +112,68 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({ user }) => {
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFileName(file.name);
+    } else {
+      setFileName(null);
+    }
+  };
+
   return (
-    <Card
-      className="w-[800px]
-      h-screen
-      sm:h-auto
-  "
-    >
+    <Card className="w-[40rem] h-screen sm:h-auto">
       <CardHeader>
-        <CardTitle>Create A Workspace</CardTitle>
-        <CardDescription>
-          Lets create a private workspace to get you started.You can add
+        <CardTitle className="text-3xl">
+          Is this your first time logging into Skillsync?
+        </CardTitle>
+        <CardDescription className="text-base">
+          Let&apos;s create a private workspace to get you started. You can add
           collaborators later from the workspace settings tab.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-4">
-            <div
-              className="flex
-            items-center
-            gap-4"
-            >
-              <div className="text-5xl">
-                <EmojiPicker getValue={(emoji) => setSelectedEmoji(emoji)}>
-                  {selectedEmoji}
-                </EmojiPicker>
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <span className="flex  items-center">
+                    <Input
+                      id="logo"
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      placeholder="Workspace Name"
+                      disabled={isLoading}
+                      {...register("logo", {
+                        required: false,
+                      })}
+                      onChange={handleFileChange}
+                    />
+                    <label
+                      htmlFor="logo"
+                      className="cursor-pointer border border-primary text-primary rounded-md px-4 py-2 text-base"
+                    >
+                      {fileName ? fileName : "Choose File"}
+                    </label>
+                  </span>
+                  <span className="text-lg ml-6 text-muted-foreground">
+                    Change your workspace Logo!
+                  </span>
+                </div>
               </div>
-              <div className="w-full ">
+              <div className="w-full flex flex-col gap-2">
                 <Label
                   htmlFor="workspaceName"
-                  className="text-sm
-                  text-muted-foreground
-                "
+                  className="text-lg  text-muted-foreground"
                 >
                   Name
                 </Label>
                 <Input
                   id="workspaceName"
                   type="text"
+                  className="border border-gray-300 rounded-md w-full text-base"
                   placeholder="Workspace Name"
                   disabled={isLoading}
                   {...register("workspaceName", {
@@ -162,32 +184,14 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({ user }) => {
                   {errors?.workspaceName?.message?.toString()}
                 </small>
               </div>
+              <div className="w-full">
+                <small className="text-red-600">
+                  {errors?.logo?.message?.toString()}
+                </small>
+              </div>
             </div>
-            <div>
-              <Label
-                htmlFor="logo"
-                className="text-sm
-                  text-muted-foreground
-                "
-              >
-                Workspace Logo
-              </Label>
-              <Input
-                id="logo"
-                type="file"
-                accept="image/*"
-                placeholder="Workspace Name"
-                // disabled={isLoading || subscription?.status !== 'active'}
-                {...register("logo", {
-                  required: false,
-                })}
-              />
-              <small className="text-red-600">
-                {errors?.logo?.message?.toString()}
-              </small>
-            </div>
-            <div className="self-end">
-              <Button disabled={isLoading} type="submit">
+            <div className="self-center">
+              <Button disabled={isLoading} type="submit" variant="start">
                 {!isLoading ? "Create Workspace" : <Loader />}
               </Button>
             </div>

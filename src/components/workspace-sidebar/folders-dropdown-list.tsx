@@ -28,6 +28,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   const [hasInitialized, setHasInitialized] = useState(false);
 
   // Memoize the folders data to prevent unnecessary re-renders
+
   const foldersData = useMemo(
     () =>
       workspaceFolders.map((folder) => ({
@@ -37,6 +38,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
             .find((workspace) => workspace.id === workspaceId)
             ?.folders.find((f) => f.id === folder.id)?.files || [],
       })),
+
     [workspaceFolders, workspaceId, state.workspaces]
   );
 

@@ -328,6 +328,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
       if (filesError) {
         console.log(filesError);
       }
+      console.log(data, "aapa");
       if (!data) return;
       dispatch({
         type: "SET_FILES",

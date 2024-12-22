@@ -5,6 +5,7 @@ import SettingsIcon from "../icons/SettingsIcon";
 import TrashIcon from "../icons/TrashIcon";
 import Settings from "../settings/settings";
 import Trash from "../trash/Trash";
+import { Calendar1Icon, CalendarIcon } from "lucide-react";
 
 interface NativeNavigationProps {
   myWorkspaceId: string;
@@ -40,7 +41,19 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
             <span>Trash</span>
           </li>
         </Trash>
-      </ul>{" "}
+        <Link href="/dashboard/events">
+          <li className="group/native flex text-neutral-50/neutrals-7 transition-all  gap-2">
+            <CalendarIcon />
+            <span>Events</span>
+          </li>
+        </Link>
+        <Link href="/">
+          <li className="group/native flex text-neutral-50/neutrals-7 transition-all  gap-2">
+            <Calendar1Icon />
+            <span>Schedule</span>
+          </li>
+        </Link>
+      </ul>
     </nav>
   );
 };

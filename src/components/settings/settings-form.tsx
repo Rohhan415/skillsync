@@ -62,7 +62,7 @@ const SettingsForm = () => {
   const [openAlertMessage, setOpenAlertMessage] = useState(false);
   const [workspaceDetails, setWorkspaceDetails] = useState<Workspace>();
   const titleTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
+
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
   // add collaborators
@@ -312,7 +312,7 @@ const SettingsForm = () => {
                   description: "Workspace deleted successfully",
                 });
                 dispatch({ type: "DELETE_WORKSPACE", payload: workspaceId });
-                router.replace("/dashboard");
+                router.replace("/dashboard/start");
               }
             }}
           >
@@ -346,8 +346,6 @@ const SettingsForm = () => {
               type="file"
               accept="image/*"
               placeholder="Profile Picture"
-              // onChange={onChangeProfilePicture}
-              disabled={uploadingProfilePicture}
             />
           </div>
         </div>

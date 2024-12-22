@@ -14,10 +14,12 @@ export async function actionLoginUser({
     email,
     password,
   });
+
   if (error) {
     return { response: null, error: error.message };
   }
-  console.log(error, data, "heres data");
+
+  console.log(error, "errsor");
 
   // Ensure data is a plain object before returning
   return { response: { data }, error: null };
@@ -37,9 +39,6 @@ export async function actionSignUpUser({
   const { error, ...response } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`,
-    },
   });
   if (error) {
     // Return only necessary information, no classes or complex objects

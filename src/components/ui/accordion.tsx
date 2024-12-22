@@ -29,9 +29,6 @@ const AccordionTrigger = React.forwardRef<
     {children}
     {/* CHANGE Removed flex 1  from this  */}
     <AccordionPrimitive.Trigger
-      onClick={(e) => {
-        e.stopPropagation(); // Prevent the click event from bubbling to the accordion
-      }}
       ref={ref}
       className={cn(
         "flex items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",

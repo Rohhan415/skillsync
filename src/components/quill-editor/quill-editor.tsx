@@ -46,7 +46,7 @@ const toolbarOptions = [
   [{ script: "sub" }, { script: "super" }], // superscript/subscript
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
   [{ direction: "rtl" }], // text direction
-
+  ["link", "image", "video", "formula"],
   [{ size: ["small", false, "large", "huge"] }], // custom dropdown
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
 
@@ -56,10 +56,6 @@ const toolbarOptions = [
 
   ["clean"], // remove formatting button
 ];
-
-//TODO CLEANUP OF THE FILE.
-// 1. MAKING CUSTOM HOOKS FOR THE SOCKET AND QUILL
-// 2. MAKING USE STATE INTO ONE OBJECT
 
 const QuillEditor: React.FC<QuillEditorProps> = ({
   dirDetails,
@@ -74,6 +70,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { socket, isConnected } = useSocket();
+  const [isEditorReady, setIsEditorReady] = useState(false);
   const [quill, setQuill] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [localCursors, setLocalCursors] = useState<any>([]);
@@ -83,7 +80,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       email: string;
       avatarURL: string;
     }[]
-  >([{ id: "shh223eesh", email: "assss@gmail.com", avatarURL: "shheesh" }]);
+  >([]);
 
   const details = Details({
     dirType,
@@ -133,7 +130,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   const wrapperRef = useCallback((wrapper: any) => {
     if (typeof window !== "undefined") {
-      if (wrapper === null) return;
+      if (!wrapper) return;
       wrapper.innerHTML = "";
       const editor = document.createElement("div");
       wrapper.append(editor);
@@ -152,10 +149,16 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             },
           });
           setQuill(quill);
+          setIsEditorReady(true);
         });
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (quill && isEditorReady) {
+    }
+  }, [quill, isEditorReady]);
 
   const breadcrumbNavBar = useMemo(() => {
     if (!pathname || !state.workspaces || !workspaceId) return;
@@ -198,7 +201,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           router.replace(`/dashboard/${workspaceId}`);
         }
         if (!workspaceId || quill === null) return;
-        if (!selectedDirectory[0].data) return;
+        if (!selectedDirectory[0]?.data) return;
         quill.setContents(JSON.parse(selectedDirectory[0].data || ""));
         dispatch({
           type: "UPDATE_FILE",
@@ -267,6 +270,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         }
       }
     };
+
     socket.on("receive-cursor-move", socketHandler);
 
     return () => {
@@ -353,11 +357,16 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   }, [dirType, dispatch, fileId, folderId, quill, socket, user, workspaceId]);
 
   useEffect(() => {
+    console.log(quill, socket, fileId, "2combo");
+
     if (quill === null || socket === null) return;
 
     const socketHandler = (delta: any, id: string) => {
+      console.log(delta, id, fileId, "COMBO");
+
       if (id === fileId) quill.updateContents(delta);
     };
+
     socket.on("receive-changes", socketHandler);
 
     return () => {

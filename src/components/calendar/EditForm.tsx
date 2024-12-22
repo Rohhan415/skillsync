@@ -7,7 +7,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const revalidate = 0;
 
-const EditEventPage = async ({
+const EditEvent = async ({
   params: { eventid },
 }: {
   params: { eventid: string };
@@ -21,14 +21,18 @@ const EditEventPage = async ({
 
   const event = await getEventById(user.id, eventid);
 
-  console.log(event);
   return (
     <Card className="max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Edit event</CardTitle>
         <CardContent>
           <EventForm
-            event={{ ...event, description: event?.description || undefined }}
+            event={{
+              ...event,
+              description: event?.description || undefined,
+              event_hour: event?.event_hour || "12:00",
+              event_date: event?.event_date || new Date().toISOString(),
+            }}
           />
         </CardContent>
       </CardHeader>
@@ -36,4 +40,4 @@ const EditEventPage = async ({
   );
 };
 
-export default EditEventPage;
+export default EditEvent;

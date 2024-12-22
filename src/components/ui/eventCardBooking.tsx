@@ -15,6 +15,7 @@ type BookingEventCardProps = {
   name: string;
   user_id: string;
   description: string | null;
+  event_hour: string;
   duration_in_minutes: number;
 };
 

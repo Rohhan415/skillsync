@@ -235,6 +235,10 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
     }
 
     if (listType === "file") {
+      const { error } = await updateFile(
+        { in_trash: `Deleted by ${user?.email}` },
+        pathId[1]
+      );
       dispatch({
         type: "UPDATE_FILE",
         payload: {
@@ -244,10 +248,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
           fileId: pathId[1],
         },
       });
-      const { error } = await updateFile(
-        { in_trash: `Deleted by ${user?.email}` },
-        pathId[1]
-      );
+
       toast({
         title: error ? "Error" : "Success",
         variant: error ? "destructive" : undefined,

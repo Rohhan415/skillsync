@@ -16,7 +16,7 @@ import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import Link from "next/link";
+
 import {
   createEvent,
   deleteEvent,
@@ -35,6 +35,7 @@ import {
 } from "../ui/alert-dialog";
 
 import { useTransition } from "react";
+import { DatePicker } from "./DatePicker";
 
 const EventForm = ({
   event,
@@ -45,6 +46,8 @@ const EventForm = ({
     description?: string;
     duration_in_minutes: number;
     is_active: boolean;
+    event_hour: string;
+    event_date: string;
   };
 }) => {
   const [isDeletePending, startDeleteTransition] = useTransition();
@@ -55,6 +58,8 @@ const EventForm = ({
       name: "",
       is_active: true,
       duration_in_minutes: 30,
+      event_hour: "12:00",
+      event_date: new Date().toISOString(),
     },
   });
 
@@ -68,6 +73,7 @@ const EventForm = ({
         message: "An error occurred sending your event",
       });
     }
+    window.location.reload();
   };
 
   const deleteEventHandler = async (eventId: string) => {
@@ -103,6 +109,39 @@ const EventForm = ({
               <FormDescription>
                 The name users will see when booking
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="event_date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="mb-1">Event Date</FormLabel>
+              <FormControl>
+                <DatePicker
+                  value={field.value ? new Date(field.value) : undefined}
+                  onChange={(date) =>
+                    field.onChange(date?.toISOString() || null)
+                  }
+                />
+              </FormControl>
+              <FormDescription>Select the date of the event</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="event_hour"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Event Hour</FormLabel>
+              <FormControl>
+                <Input type="time" {...field} className="w-full" step="3600" />
+              </FormControl>
+              <FormDescription>Choose the hour for the event</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -193,14 +232,7 @@ const EventForm = ({
               </AlertDialogContent>
             </AlertDialog>
           )}
-          <Button
-            disabled={isDeletePending || form.formState.isSubmitting}
-            type="button"
-            asChild
-            variant="outline"
-          >
-            <Link href="/dashboard/events">Cancel</Link>
-          </Button>
+
           <Button
             disabled={isDeletePending || form.formState.isSubmitting}
             type="submit"

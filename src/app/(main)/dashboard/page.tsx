@@ -1,5 +1,5 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { redirect } from "next/navigation";
+
 import { cookies } from "next/headers";
 import DashboardSidebar from "@/components/dashboard-sidebar/Sidebar";
 import { oAuth2Client } from "@/lib/serverActions/google-auth";
@@ -23,15 +23,11 @@ async function DashboardPage() {
 
   if (!user) return;
 
-  console.log(user.id, "user id");
-
   const { data: workspace } = await supabase
     .from("workspaces")
     .select("*")
     .eq("workspace_owner", user.id)
     .single(); // specjalnie zwraca null zeby pokazac okienko
-
-  console.log(workspace, "rrrrrrrrrrrr");
 
   if (!workspace) {
     return (
@@ -51,8 +47,6 @@ async function DashboardPage() {
       </>
     );
   }
-
-  redirect(`/dashboard/${workspace.id}`);
 }
 
 export default DashboardPage;

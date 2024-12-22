@@ -15,6 +15,7 @@ export const createEvent = async (
   values: z.infer<typeof eventFormSchema>
 ): Promise<{ error: boolean } | undefined> => {
   const supabase = createServerComponentClient({ cookies });
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

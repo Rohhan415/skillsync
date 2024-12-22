@@ -15,8 +15,6 @@ const SchedulePage = async () => {
 
   const schedule = await getScheduleById(user.id);
 
-  console.log(schedule, "weewe");
-
   return (
     <Card className="max-w-md mx-auto">
       <CardHeader>

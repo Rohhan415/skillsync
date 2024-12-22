@@ -3,7 +3,6 @@ import {
   getFolders,
   getPrivateWorkspaces,
   getSharedWorkspaces,
-  getUserSubscriptionStatus,
 } from "@/lib/supabase/queries";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
@@ -13,6 +12,8 @@ import WorkspaceDropdown from "./workspace-dropdown";
 import NativeNavigation from "./native-navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import FoldersDropdownList from "./folders-dropdown-list";
+
+export const revalidate = 0;
 
 interface SidebarProps {
   params: { workspaceId: string };
@@ -27,13 +28,11 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
 
   if (!user) return;
 
-  const { error: subscriptionError } = await getUserSubscriptionStatus(user.id);
-
   const { data: workspaceFolderData, error: foldersError } = await getFolders(
     params.workspaceId
   );
 
-  if (subscriptionError || foldersError) redirect("/dashboard");
+  if (foldersError) redirect("/dashboard/start");
 
   const [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces] =
     await Promise.all([

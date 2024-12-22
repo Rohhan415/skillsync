@@ -7,7 +7,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema } from "@/lib/types";
 import Link from "next/link";
-import Logo from "../../../../public/ExampleLogo.png";
+import Logo from "../../../../public/logo.png";
 import Image from "next/image";
 import {
   Form,
@@ -35,21 +35,22 @@ function LoginPage() {
   });
 
   const isLoading = form.formState.isSubmitting;
-  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
-    const result = await actionLoginUser(data);
 
-    console.log(result, "errssor");
+  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
+    const { error, data: result } = await actionLoginUser(data);
+
+    console.log(error, "error");
 
     if (result) {
-      const workspaces = result.response
-        ? await getPrivateWorkspaces(result.response.data.user.id)
-        : [];
+      const workspaces = await getPrivateWorkspaces(result.user.id);
 
       const isWorkspace: boolean = workspaces.length > 0;
 
-      if (result.error) {
+      if (error) {
+        console.log(error, "wowo");
+
         form.reset();
-        setSubmitError(result.error);
+        setSubmitError(error);
       }
 
       if (isWorkspace) {
@@ -59,6 +60,7 @@ function LoginPage() {
       }
     }
   };
+
   return (
     <div className="relative w-full h-full">
       <Image

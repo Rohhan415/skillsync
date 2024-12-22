@@ -3,7 +3,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/lib/providers/state-provider";
-import { File, Folder } from "@/lib/supabase/supabase.types";
+import { File, Folder, Workspace } from "@/lib/supabase/supabase.types";
 
 const useSupabaseRealtime = () => {
   const supabase = createClientComponentClient();
@@ -177,9 +177,60 @@ const useSupabaseRealtime = () => {
       )
       .subscribe();
 
+    const workspaceChannel = supabase.channel("realtime-workspaces");
+
+    workspaceChannel
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "workspaces" },
+        async (payload) => {
+          if (payload.eventType === "INSERT") {
+            console.log("🟢 RECEIVED REAL TIME WORKSPACE EVENT");
+            const newWorkspace: Workspace = {
+              id: payload.new.id,
+              created_at: payload.new.created_at,
+              title: payload.new.title,
+              icon_id: payload.new.icon_id,
+              in_trash: payload.new.in_trash,
+              workspace_owner: payload.new.workspace_owner,
+              logo: payload.new.logo,
+              banner_url: payload.new.banner_url,
+              data: payload.new.data,
+            };
+            dispatch({
+              type: "ADD_WORKSPACE",
+              payload: { ...newWorkspace, folders: [] },
+            });
+          } else if (payload.eventType === "DELETE") {
+            dispatch({
+              type: "DELETE_WORKSPACE",
+              payload: payload.old.id,
+            });
+          } else if (payload.eventType === "UPDATE") {
+            dispatch({
+              type: "UPDATE_WORKSPACE",
+              payload: {
+                workspaceId: payload.new.id,
+                workspace: {
+                  title: payload.new.title,
+                  icon_id: payload.new.icon_id,
+                  in_trash: payload.new.in_trash,
+                  workspace_owner: payload.new.workspace_owner,
+                  logo: payload.new.logo,
+                  banner_url: payload.new.banner_url,
+                  data: payload.new.data,
+                },
+              },
+            });
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       fileChannel.unsubscribe();
       folderChannel.unsubscribe();
+      workspaceChannel.unsubscribe();
     };
   }, [supabase, state, dispatch, router, selectedWorkspace]);
 

@@ -1,5 +1,6 @@
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+import { getPrivateWorkspaces } from "./lib/supabase/queries";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -10,24 +11,15 @@ export async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith("/dashboard") && !session) {
     return NextResponse.redirect(new URL("/login", req.nextUrl).toString());
   }
-  const emailListError =
-    "Email link is invalid or has expired. Please request a new one.";
-  if (
-    req.nextUrl.searchParams.get("error_description") === emailListError &&
-    req.nextUrl.pathname !== "/signup"
-  ) {
-    return NextResponse.redirect(
-      new URL(
-        `/signup?error_description=${req.nextUrl.searchParams.get(
-          "error_description"
-        )}`,
-        req.url
-      ).toString()
-    );
-  }
 
-  if (["/login", "/signup"].includes(req.nextUrl.pathname) && session) {
-    return NextResponse.redirect(new URL("/dashboard", req.url).toString());
+  if (["/login"].includes(req.nextUrl.pathname) && session) {
+    const workspaces = await getPrivateWorkspaces(session.user.id);
+
+    return workspaces.length > 0
+      ? NextResponse.redirect(
+          new URL(`/dashboard/${workspaces[0].id}`, req.url).toString()
+        )
+      : NextResponse.redirect(new URL("/dashboard/start", req.url).toString());
   }
   return res;
 }

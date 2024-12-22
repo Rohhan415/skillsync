@@ -13,7 +13,7 @@ const WorkspacePage = async ({
   if (error || !data.length) redirect("/dashboard");
 
   return (
-    <div className="relative h-full  flex flex-col">
+    <div className="h-full flex flex-col relative ">
       <QuillEditor
         dirType="workspace"
         fileId={params.workspaceId}

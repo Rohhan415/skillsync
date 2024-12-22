@@ -6,9 +6,9 @@ import { redirect } from "next/navigation";
 
 const FolderPage = async ({ params }: { params: { folderId: string } }) => {
   const { data, error } = await getFolderDetails(params.folderId);
-  if (error || !data.length) redirect("/dashboard"); // make better dashboard
+  if (error || !data.length) redirect("/dashboard/start");
   return (
-    <div className="relative">
+    <div className="relative flex flex-col h-full flex-grow">
       <QuillEditor
         dirType="folder"
         fileId={params.folderId}

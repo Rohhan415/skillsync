@@ -19,12 +19,13 @@ import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import Logo from "../../../../public/ExampleLogo.png";
+import Logo from "../../../../public/logo.png";
 import Loader from "@/components/global/Loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { FormSchema } from "@/lib/types";
 import { actionSignUpUser } from "@/lib/serverActions/auth-actions";
+import background from "../../../../public/homepage-background.webp";
 
 const SignUpFormSchema = z
   .object({
@@ -74,7 +75,7 @@ function Signup() {
   const isLoading = form.formState.isSubmitting;
   const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
     const result = await actionSignUpUser({ email, password });
-    if ("error" in result) {
+    if (result && "error" in result) {
       setSubmitError(result.error.message);
       form.reset();
       return;
@@ -83,103 +84,131 @@ function Signup() {
   };
 
   return (
-    <Form {...form}>
-      <div className="flex justify-center items-center h-full ">
-        <form
-          onChange={() => {
-            if (submitError) setSubmitError("");
-          }}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col"
-        >
-          <Link href="/" className="w-full flex justify-left items-center ">
-            <Image src={Logo} alt="logo" width={50} height={50} priority />
-            <span className="font-semibold dark:text-white text-4xl first-letter:ml-2 ">
-              SkillSync.
-            </span>
-          </Link>
-          <FormDescription className="text-foreground/60">
-            All-in-One Collaboration and Productivity
-          </FormDescription>
-          {!confirmation && !ExchangeError && (
-            <>
-              <FormField
-                disabled={isLoading}
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input type="email" placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                disabled={isLoading}
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                disabled={isLoading}
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Confirm Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <>
+      <div className="relative w-full h-full">
+        <Image
+          src={background}
+          fill
+          placeholder="blur"
+          quality={80}
+          className="object-cover object-top bg-black opacity-50 "
+          alt="Two green pencils on a grey background"
+        />
+        <div className="absolute inset-0 flex justify-center items-center z-20">
+          <Form {...form}>
+            <form
+              onChange={() => {
+                if (submitError) setSubmitError("");
+              }}
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col bg-black/50 p-6 rounded-lg shadow-lg"
+            >
+              <Link
+                href="/"
+                className="w-full flex justify-center items-center "
+              >
+                <Image src={Logo} alt="logo" width={50} height={50} priority />
+                <span className="font-semibold dark:text-white text-4xl first-letter:ml-2 ">
+                  SkillSync.
+                </span>
+              </Link>
+              <FormDescription className=" flex justify-center text-foreground/60">
+                All-in-One Collaboration and Productivity
+              </FormDescription>
+              {!confirmation && !ExchangeError && (
+                <>
+                  <FormField
+                    disabled={isLoading}
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Email"
+                            className="border border-gray-300 rounded-md"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    disabled={isLoading}
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Password"
+                            className="border border-gray-300 rounded-md"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    disabled={isLoading}
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Confirm Password"
+                            className="border border-gray-300 rounded-md"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <Button type="submit" className="w-full p-6" disabled={isLoading}>
-                {!isLoading ? "Create Account" : <Loader />}
-              </Button>
-            </>
-          )}
+                  <Button
+                    type="submit"
+                    className="w-full p-6"
+                    disabled={isLoading}
+                  >
+                    {!isLoading ? "Create Account" : <Loader />}
+                  </Button>
+                </>
+              )}
 
-          {submitError && <FormMessage>{submitError}</FormMessage>}
-          <span className="self-container">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary">
-              Login
-            </Link>
-          </span>
-          {(confirmation || ExchangeError) && (
-            <>
-              <Alert className={confirmationAndErrorStyles}>
-                {!ExchangeError && <MailCheck className="h-4 w-4" />}
-                <AlertTitle>
-                  {ExchangeError ? "Invalid Link" : "Check your email."}
-                </AlertTitle>
-                <AlertDescription>
-                  {ExchangeError || "An email confirmation has been sent."}
-                </AlertDescription>
-              </Alert>
-            </>
-          )}
-        </form>
+              {submitError && <FormMessage>{submitError}</FormMessage>}
+              <span className=" self-center">
+                Already have an account?{" "}
+                <Link href="/login" className="text-primary">
+                  Login
+                </Link>
+              </span>
+              {(confirmation || ExchangeError) && (
+                <>
+                  <Alert className={confirmationAndErrorStyles}>
+                    {!ExchangeError && <MailCheck className="h-4 w-4" />}
+                    <AlertTitle>
+                      {ExchangeError
+                        ? "Invalid Link"
+                        : "Registered Successfully!"}
+                    </AlertTitle>
+                    <AlertDescription>
+                      {ExchangeError || "Please go to the login page to enter."}
+                    </AlertDescription>
+                  </Alert>
+                </>
+              )}
+            </form>
+          </Form>
+        </div>
       </div>
-    </Form>
+    </>
   );
 }
 

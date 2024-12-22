@@ -8,9 +8,9 @@ const FilePage = async ({ params }: { params: { fileId: string } }) => {
   const { data, error } = await getFileDetails(params.fileId);
   console.log(error);
 
-  if (error || !data.length) redirect("/dashboard"); // make better dashboard
+  if (error || !data.length) redirect("/dashboard/start");
   return (
-    <div className="relative">
+    <div className="relative flex flex-col h-full flex-grow">
       <QuillEditor
         dirType="file"
         fileId={params.fileId}
