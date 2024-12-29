@@ -7,7 +7,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema } from "@/lib/types";
 import Link from "next/link";
-import Logo from "../../../../public/ExampleLogo.png";
+import Logo from "../../../../public/logo.png";
 import Image from "next/image";
 import {
   Form,

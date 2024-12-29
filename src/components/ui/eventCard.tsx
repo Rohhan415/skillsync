@@ -16,6 +16,7 @@ interface EventCardProps {
   isActive: boolean;
   name: string;
   description: string | null;
+  durationInMinutes: number;
   eventDate: string;
   eventHour: string;
   userId: string;
@@ -26,13 +27,21 @@ export const EventCard: React.FC<EventCardProps> = ({
   isActive,
   name,
   description,
+  durationInMinutes,
   eventDate,
   eventHour,
 }) => {
   return (
     <Card className={cn("flex flex-col", !isActive && "border-secondary/50")}>
       <CardHeader className={cn(!isActive && "opacity-50")}>
-        <CardTitle>{name}</CardTitle>
+        <div className="flex justify-between">
+          {" "}
+          <CardTitle>{name}</CardTitle>
+          <CardDescription className="text-xs">
+            Duration: <span className="text-primary">{durationInMinutes}</span>
+          </CardDescription>
+        </div>
+
         <CardDescription className="flex gap-4">
           <span>
             <span>The time: </span>
@@ -50,7 +59,27 @@ export const EventCard: React.FC<EventCardProps> = ({
         </CardContent>
       )}
       <CardFooter className="flex justify-end gap-2 mt-auto">
-        {isActive && (
+        {isActive ? (
+          <CustomDialogTrigger
+            header="Edit Event"
+            className="inline-block"
+            content={
+              <EventForm
+                event={{
+                  id,
+                  name,
+                  description: description ?? undefined,
+                  event_hour: eventHour,
+                  duration_in_minutes: 60,
+                  is_active: isActive,
+                  event_date: eventDate,
+                }}
+              />
+            }
+          >
+            <div className={buttonStyles}>Edit</div>
+          </CustomDialogTrigger>
+        ) : (
           <CustomDialogTrigger
             header="Edit Event"
             className="inline-block"

@@ -5,6 +5,7 @@
     "fullcalendar",
     "NEXTAUTH",
     "nextjs",
+    "Pomodoro",
     "upsert"
   ]
 }

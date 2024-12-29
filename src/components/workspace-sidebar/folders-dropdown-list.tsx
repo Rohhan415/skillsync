@@ -102,10 +102,8 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
 
   return (
     <>
-      <div className="flex sticky z-20 bg-background w-full h-10 justify-between items-center pr-4 text-Neutrals/neutrals-8">
-        <span className="text-Neutrals-8 font-bold text-xs uppercase ">
-          Folders
-        </span>
+      <div className="flex sticky z-20  w-full h-10 justify-between items-center pr-4 ">
+        <span className="font-bold text-xs uppercase ">Folders</span>
         <TooltipComponent message="Create Folder">
           <PlusIcon
             onClick={addFolderHandler}

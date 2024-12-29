@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
-import HomeIcon from "../icons/HomeIcon";
-import SettingsIcon from "../icons/SettingsIcon";
-import TrashIcon from "../icons/TrashIcon";
 import Settings from "../settings/settings";
 import Trash from "../trash/Trash";
-import { Calendar1Icon, CalendarIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  HomeIcon,
+  SettingsIcon,
+  TimerIcon,
+  TrashIcon,
+} from "lucide-react";
 
 interface NativeNavigationProps {
   myWorkspaceId: string;
@@ -18,8 +21,7 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
 }) => {
   return (
     <nav className={twMerge("my-2", className)}>
-      {" "}
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-4">
         <li>
           <Link
             className="group/native flex text-neutral-50 transition-all  gap-2"
@@ -47,10 +49,10 @@ const NativeNavigation: React.FC<NativeNavigationProps> = ({
             <span>Events</span>
           </li>
         </Link>
-        <Link href="/">
+        <Link href="/dashboard/pomodoro">
           <li className="group/native flex text-neutral-50/neutrals-7 transition-all  gap-2">
-            <Calendar1Icon />
-            <span>Schedule</span>
+            <TimerIcon />
+            <span>Pomodoro</span>
           </li>
         </Link>
       </ul>

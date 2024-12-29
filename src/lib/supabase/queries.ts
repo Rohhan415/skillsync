@@ -563,6 +563,12 @@ export async function insertEvent(
   return { message: "Event inserted successfully" };
 }
 
+export async function insertCollaboratorEvent(data) {
+  const { error } = await supabase.from("events").insert([data]);
+
+  return { error: !!error }; // Return a simplified response
+}
+
 export async function getEventById(userId: string, eventId: string) {
   console.log(userId, eventId, "sisi");
 
@@ -751,4 +757,18 @@ export async function getEventSchedule(userId: string, eventId: string) {
   console.log(event, "event");
 
   return event || null; // Return the event or null if not found
+}
+
+export async function getUser(userId: string) {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching user: ${error.message}`);
+  }
+
+  return data;
 }

@@ -2,19 +2,12 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { useAppState } from "@/lib/providers/state-provider";
-import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
+
 import { User, Workspace } from "@/lib/supabase/supabase.types";
 import { Separator } from "@radix-ui/react-select";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import LogoutButton from "../global/logout-button";
-import {
-  Briefcase,
-  Lock,
-  LogOut,
-  Plus,
-  Share,
-  User as UserIcon,
-} from "lucide-react";
+
+import { Briefcase, Lock, Plus, Share } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -49,12 +42,11 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
-import ProfileIcon from "../icons/Profile-Icon";
 
 const SettingsForm = () => {
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useSupabaseUser();
+
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
   const [permissions, setPermissions] = useState("private");
@@ -132,7 +124,7 @@ const SettingsForm = () => {
     if (!file) return;
     const uuid = v4();
     setUploadingLogo(true);
-    const { error } = await supabase.storage
+    const { data, error } = await supabase.storage
       .from("workspace-logos")
       .upload(`workspaceLogo.${uuid}`, file, {
         cacheControl: "3600",
@@ -141,9 +133,9 @@ const SettingsForm = () => {
     if (!error) {
       dispatch({
         type: "UPDATE_WORKSPACE",
-        payload: { workspace: { title: e.target.value }, workspaceId },
+        payload: { workspace: { logo: data.path }, workspaceId },
       });
-      await updateWorkspace({ title: e.target.value }, workspaceId);
+      await updateWorkspace({ logo: data.path }, workspaceId);
       setUploadingLogo(true);
     }
   };
@@ -319,43 +311,6 @@ const SettingsForm = () => {
             Delete Workspace
           </Button>
         </Alert>
-        <p className="flex items-center gap-2 mt-6">
-          <UserIcon size={24} /> Profile
-        </p>
-        <Separator />
-        <div className="flex items-center">
-          <Avatar>
-            {/* WIP ADD USER PROFILE PIC */}
-            {/* <AvatarImage src={user.} /> */}
-            <AvatarFallback>
-              <ProfileIcon />
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col ml-6">
-            <small className="text-muted-foreground cursor-not-allowed">
-              {user ? user.email : ""}
-            </small>
-            <Label
-              htmlFor="profilePicture"
-              className="text-sm text-muted-foreground"
-            >
-              Profile Picture
-            </Label>
-            <Input
-              name="profilePicture"
-              type="file"
-              accept="image/*"
-              placeholder="Profile Picture"
-            />
-          </div>
-        </div>
-        <LogoutButton>
-          <div className="flex items-center">
-            {" "}
-            <LogOut />
-          </div>
-        </LogoutButton>
-        <p></p>
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>

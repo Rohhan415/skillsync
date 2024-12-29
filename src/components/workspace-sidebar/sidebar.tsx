@@ -12,6 +12,8 @@ import WorkspaceDropdown from "./workspace-dropdown";
 import NativeNavigation from "./native-navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import FoldersDropdownList from "./folders-dropdown-list";
+import UserProfile from "./Profile";
+import { Separator } from "../ui/separator";
 
 export const revalidate = 0;
 
@@ -44,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   return (
     <aside
       className={twMerge(
-        "hidden sm:flex sm:flex-col w-[280px] border-r-1 border-r border-primary-foreground  shrink-0 p-4 md:gap-4 !justify-between",
+        "hidden sm:flex sm:flex-col w-[280px] bg-muted/20 border-r-1 border-r border-primary/40 shrink-0 p-4 md:gap-4 !justify-between",
         className
       )}
     >
@@ -60,14 +62,16 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
           collaboratingWorkspaces={collaboratingWorkspaces}
         />
         <NativeNavigation myWorkspaceId={params.workspaceId} />
+        <Separator className="bg-primary/40" />
         <ScrollArea className="overflow-auto relative h-[450px]">
-          <div className=" pointer-events-none w-full absolute bottom-0 h-20 bg-gradient-to-t from from-background to-transparent z-40" />
+          <div className=" pointer-events-none w-full absolute bottom-0 h-20   from-background to-transparent z-40" />
           <FoldersDropdownList
             workspaceFolders={workspaceFolderData || []}
             workspaceId={params.workspaceId}
           />
         </ScrollArea>
       </div>
+      <UserProfile />
     </aside>
   );
 };

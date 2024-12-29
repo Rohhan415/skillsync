@@ -26,7 +26,6 @@ export const createEvent = async (
     return { error: true };
   }
   await insertEvent(data, user.id);
-  redirect("/dashboard/events");
 };
 
 export const updateEvent = async (
@@ -44,7 +43,6 @@ export const updateEvent = async (
     return { error: true };
   }
   await updateEventDetails(id, user.id, data);
-  redirect("/dashboard/events");
 };
 
 export const deleteEvent = async (

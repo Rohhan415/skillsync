@@ -30,6 +30,7 @@ import { Badge } from "../ui/badge";
 import useSocket from "@/lib/providers/socket-provider";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { CheckCircle, XCircle } from "lucide-react";
 
 interface QuillEditorProps {
   dirDetails: File | Folder | Workspace;
@@ -425,17 +426,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   return (
     <>
-      <Badge
-        variant="secondary"
-        className={`top-4 right-4 z-50 ${
-          isConnected ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
-        }`}
-      >
-        {isConnected ? "Connected" : "Not Connected"}
-      </Badge>
       <div className=" ">
         {details.in_trash && (
-          <article className=" py-2 z-40 bg-[#EB5757] md:flex-row flex-col justify-center items-center gap-4 flex-wrap">
+          <article className=" py-2 z-40 bg-destructive md:flex-row flex-col justify-center items-center gap-4 flex-wrap">
             <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
               <span className="text-white">
                 This {dirType} is in the trash.
@@ -443,7 +436,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
               <Button
                 size="sm"
                 variant="outline"
-                className="bg-transparent border-white text-white  hover:bg-white hover:text-[#EB5757]"
+                className="bg-transparent border-white text-white  hover:bg-white hover:text-destructive"
                 onClick={restoreFileHandler}
               >
                 Restore
@@ -451,7 +444,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
               <Button
                 size="sm"
                 variant="outline"
-                className="bg-transparent border-white text-white  hover:bg-white hover:text-[#EB5757]"
+                className="bg-transparent border-white text-white  hover:bg-white hover:text-destructive"
                 onClick={deleteFileHandler}
               >
                 Delete
@@ -461,8 +454,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           </article>
         )}
       </div>
-      <div className="flex flex-col-reverse sm:flex-row sm:justify-between justify-center sm:items-center sm:p-2 p-8">
-        <div>{breadcrumbNavBar}</div>
+      <div className="flex flex-col-reverse  sm:flex-row sm:justify-between justify-center sm:items-center sm:p-2 p-8">
+        <div className="text-xl">{breadcrumbNavBar}</div>
         <div className="flex items-center gap-4">
           <div className="flex items-center justify-center h-10">
             {" "}
@@ -502,9 +495,27 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
               Saved
             </Badge>
           )}
+          <Badge
+            variant="secondary"
+            className={`top-4 right-4 z-50 flex items-center gap-2 ${
+              isConnected
+                ? "bg-emerald-600 text-white"
+                : "bg-red-600 text-white"
+            }`}
+          >
+            {isConnected ? (
+              <>
+                <CheckCircle className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <XCircle className="w-4 h-4" />
+              </>
+            )}
+          </Badge>
         </div>
       </div>
-      <div className="flex flex-col ">
+      <div className="flex flex-col ml-6 ">
         <span className="text-muted-foreground text-3xl font-bold h-9">
           {details.title}
         </span>
@@ -516,7 +527,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       <div className=" flex-grow flex  justify-start items-center flex-col mt-2 relative">
         <div
           id="container"
-          className="max-w-[800px] h-full pb-8  flex flex-col items-center"
+          className="max-w-[800px] bg-muted-10 border border-primary/40 h-full mb-8  flex flex-col items-center"
           ref={wrapperRef}
         ></div>
       </div>

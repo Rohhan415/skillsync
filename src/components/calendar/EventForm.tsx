@@ -34,8 +34,11 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { DatePicker } from "./DatePicker";
+import { User } from "@/lib/supabase/supabase.types";
+import CollaboratorSearch from "../global/collaborator-search";
+import { insertCollaboratorEvent } from "@/lib/supabase/queries";
 
 const EventForm = ({
   event,
@@ -51,6 +54,7 @@ const EventForm = ({
   };
 }) => {
   const [isDeletePending, startDeleteTransition] = useTransition();
+  const [collaborators, setCollaborators] = useState<User[]>([]);
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -63,17 +67,66 @@ const EventForm = ({
     },
   });
 
+  const addCollaborator = (user: User) => {
+    setCollaborators((prev) => [...prev, user]);
+  };
+
+  const removeCollaborator = (user: User) => {
+    setCollaborators((prev) => prev.filter((c) => c.id !== user.id));
+  };
+
   const onSubmit = async (values: z.infer<typeof eventFormSchema>) => {
     const action = event ? updateEvent.bind(null, event.id) : createEvent;
 
+    // Step 1: Create or update the main event (for the owner)
     const eventData = await action(values);
 
     if (eventData?.error) {
       form.setError("root", {
-        message: "An error occurred sending your event",
+        message: "An error occurred while creating or updating your event.",
+      });
+      return;
+    }
+
+    // Step 2: Loop through collaborators and create unique events for each
+    const collaboratorPromises = collaborators.map(async (collaborator) => {
+      const collaboratorEvent = {
+        ...values,
+        user_id: collaborator.id,
+        is_active: false,
+      };
+
+      // Directly call a helper to insert the event for the collaborator
+      const result = await insertCollaboratorEvent(collaboratorEvent);
+
+      if (result?.error) {
+        console.error(
+          `Error creating event for collaborator ${collaborator.email}`
+        );
+        return { error: true, collaborator };
+      }
+
+      return { error: false, collaborator };
+    });
+
+    // Wait for all collaborator events to be created
+    const collaboratorResults = await Promise.all(collaboratorPromises);
+
+    // Step 3: Handle errors from collaborator events (optional feedback)
+    const failedCollaborators = collaboratorResults.filter((res) => res.error);
+
+    if (failedCollaborators.length > 0) {
+      form.setError("root", {
+        message: `Failed to create events for ${failedCollaborators
+          .map((c) => c.collaborator.email)
+          .join(", ")}`,
       });
     }
-    window.location.reload();
+
+    // Step 4: Redirect or reload upon successful creation
+    if (failedCollaborators.length === 0) {
+      window.location.reload();
+    }
   };
 
   const deleteEventHandler = async (eventId: string) => {
@@ -107,7 +160,7 @@ const EventForm = ({
                 <Input {...field} />
               </FormControl>
               <FormDescription>
-                The name users will see when booking
+                The name users will see when making an event
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -176,6 +229,44 @@ const EventForm = ({
             </FormItem>
           )}
         />
+        {!event && (
+          <div className="mt-4">
+            <div className="flex justify-between items-center">
+              <FormLabel>Collaborators</FormLabel>
+              <CollaboratorSearch
+                existingCollaborators={collaborators}
+                getCollaborators={addCollaborator}
+                trigger={
+                  <Button type="button" className="text-sm">
+                    Add Collaborators
+                  </Button>
+                }
+              />
+            </div>
+            <div className="mt-4">
+              {collaborators.length > 0 ? (
+                collaborators.map((collaborator) => (
+                  <div
+                    key={collaborator.id}
+                    className="flex justify-between items-center"
+                  >
+                    <span>{collaborator.email}</span>
+                    <Button
+                      variant="secondary"
+                      onClick={() => removeCollaborator(collaborator)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted-foreground">
+                  No collaborators added yet.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
         <FormField
           control={form.control}
           name="is_active"
@@ -191,7 +282,7 @@ const EventForm = ({
                 <FormLabel>Active</FormLabel>
               </div>
               <FormDescription>
-                Inactive events will not be visible for users to book
+                Inactive events can be activated later
               </FormDescription>
             </FormItem>
           )}

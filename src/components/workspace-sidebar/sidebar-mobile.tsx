@@ -1,7 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
-import PageIcon from "../icons/Pages-Icon";
+import { BookOpen, Menu } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 
@@ -11,7 +10,7 @@ interface MobileSidebarProps {
 
 export const nativeNavigation = [
   { title: "Sidebar", id: "sidebar", custom_Icon: Menu },
-  { title: "Pages", id: "pages", custom_Icon: PageIcon },
+  { title: "Pages", id: "pages", custom_Icon: BookOpen },
 ] as const;
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ children }) => {

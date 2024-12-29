@@ -10,7 +10,7 @@ const FilePage = async ({ params }: { params: { fileId: string } }) => {
 
   if (error || !data.length) redirect("/dashboard/start");
   return (
-    <div className="relative flex flex-col h-full flex-grow">
+    <div className="relative bg-muted/10 flex flex-col h-full flex-grow">
       <QuillEditor
         dirType="file"
         fileId={params.fileId}
