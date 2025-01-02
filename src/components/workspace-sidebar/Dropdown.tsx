@@ -189,10 +189,10 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
       banner_url: "",
     };
     const { error } = await createFile(newFile);
-    dispatch({
-      type: "ADD_FILE",
-      payload: { file: newFile, folderId: id, workspaceId },
-    });
+    // dispatch({
+    //   type: "ADD_FILE",
+    //   payload: { file: newFile, folderId: id, workspaceId },
+    // });
     if (error) {
       toast({
         title: "Error",
@@ -239,6 +239,7 @@ const Dropdown: React.FC<DropdownProps> = ({ title, id, listType, iconId }) => {
         { in_trash: `Deleted by ${user?.email}` },
         pathId[1]
       );
+
       dispatch({
         type: "UPDATE_FILE",
         payload: {
