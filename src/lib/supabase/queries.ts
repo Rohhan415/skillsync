@@ -563,7 +563,8 @@ export async function insertEvent(
   return { message: "Event inserted successfully" };
 }
 
-export async function insertCollaboratorEvent(data) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function insertCollaboratorEvent(data: any) {
   const { error } = await supabase.from("events").insert([data]);
 
   return { error: !!error }; // Return a simplified response

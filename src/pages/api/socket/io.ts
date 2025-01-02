@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextApiResponseServerIo } from "@/lib/types";
 import { Server as NetServer } from "http";
 import { Server as ServerIO } from "socket.io";

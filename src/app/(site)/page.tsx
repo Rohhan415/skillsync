@@ -1,9 +1,7 @@
-import { getOAuthClient } from "@/lib/google-calendar/queries";
 import Image from "next/image";
 import background from "../../../public/homepage-background.webp";
 
 function HomePage() {
-  getOAuthClient();
   return (
     <main className="mt-24">
       <Image

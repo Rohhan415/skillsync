@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { ThemeProvider } from "@/lib/providers/next-theme-provider";
 import { DM_Sans } from "next/font/google";
 import { twMerge } from "tailwind-merge";

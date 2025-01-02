@@ -19,9 +19,6 @@ export async function actionLoginUser({
     return { response: null, error: error.message };
   }
 
-  console.log(error, "errsor");
-
-  // Ensure data is a plain object before returning
   return { response: { data }, error: null };
 }
 
@@ -41,7 +38,6 @@ export async function actionSignUpUser({
     password,
   });
   if (error) {
-    // Return only necessary information, no classes or complex objects
     return {
       error: { message: error.message, code: error.code, status: error.status },
     };

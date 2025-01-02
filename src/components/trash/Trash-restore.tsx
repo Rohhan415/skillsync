@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 type TrashRestoreProps = object;
 
 const TrashRestore: React.FC<TrashRestoreProps> = () => {
-  const { state, workspaceId, folderId } = useAppState();
+  const { state, workspaceId } = useAppState();
   const [folders, setFolders] = useState<appFoldersType[] | []>([]);
   const [files, setFiles] = useState<File[] | []>();
 
