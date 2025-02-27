@@ -7,7 +7,7 @@ const Calendar = ({ children }: { children: ReactNode }) => {
     <>
       <header className="flex py-2 border-b bg-card w-full ">
         <nav className="font-medium flex items-center text-sm gap-6 container">
-          <div className="flex items-center gap-2 font-semibold mr-auto">
+          <div className="flex items-center gap-3 font-semibold mr-auto">
             <CalendarRange className="size-6" />
             <span className="sr-only md:not-sr-only">SkillSync</span>
           </div>
