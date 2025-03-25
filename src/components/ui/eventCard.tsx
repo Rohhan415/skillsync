@@ -12,7 +12,7 @@ import CustomDialogTrigger from "../global/custom-dialog";
 import EventForm from "@/components/calendar/EventForm";
 
 interface EventCardProps {
-  id: string;
+  id?: string;
   isActive: boolean;
   name: string;
   description: string | null;
